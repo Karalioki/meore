@@ -53,6 +53,7 @@ class SystemState(object):
                 packet.start_service()
                 self.served_packet = 1
                 self.server_busy = True
+                #კუტუ კვერცხი
             return True
 
     def add_packet_to_queue(self):
