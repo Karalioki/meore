@@ -42,12 +42,9 @@ class SystemState(object):
         if self.server_busy:
             return False
         else:
-            if not self.buffer.is_empty():
-                self.buffer.remove()
-
-            packet = Packet(self.sim)
-            packet.start_service()
-            self.served_packet = 1
+            self.served_packet = Packet(self.sim, self.sim.sim_state.now-self.last_arrival)
+            self.last_arrival = self.sim.sim_state.now
+            self.served_packet.start_service()
             self.server_busy = True
             return True
 
@@ -57,12 +54,13 @@ class SystemState(object):
         :return: True if buffer/queue is not full and packet has been added successfully.
         """
         if self.get_queue_length() < self.sim.sim_param.S:
-            packet = Packet(self.sim)
-            packet.get_waiting_time()
+            packet = Packet(self.sim,self.sim.sim_state.now-self.last_arrival)
+            self.last_arrival = self.sim.sim_state.now
             self.buffer.add(packet)
             # self.buffer_content += 1
             return True
         else:
+            self.last_arrival = self.sim.sim_state.now
             return False
 
     def complete_service(self):
@@ -70,15 +68,17 @@ class SystemState(object):
         Reset server status to idle after a service completion.
         """
         self.server_busy = False
+        self.served_packet = self.served_packet.complete_service()
 
     def start_service(self):
         """
         If the buffer is not empty, take the next packet from there and serve it.
         :return: True if buffer is not empty and a stored packet is being served.
         """
-        if self.buffer_content == 0:
+        if self.buffer.is_empty():
             return False
         else:
-            self.buffer_content -= 1
+            self.served_packet = self.buffer.remove()
+            self.served_packet.start_service()
             self.server_busy = True
             return True

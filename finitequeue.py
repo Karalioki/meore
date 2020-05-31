@@ -64,7 +64,9 @@ class FiniteQueue(object):
         """
         erase/delete all packets from the FIFO
         """
-        # for self.buffer.empty() == False:
-        #     self.buffer.get()
+        if not self.is_empty():
+            a = self.get_queue_length()
+            for i in range(a):
+                self.remove()
         # TODO Task 2.2.1: Your code goes here
         pass

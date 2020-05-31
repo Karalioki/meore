@@ -43,7 +43,7 @@ class Packet(object):
         self.served = False
         self.completed = True
         self.t_complete = self.sim.sim_state.now
-        pass
+        return None
 
     def get_waiting_time(self):
         """
@@ -81,7 +81,6 @@ class Packet(object):
         # TODO Task 2.1.1: Your code goes here
         if self.completed:
             return self.get_waiting_time() + self.get_service_time()
-        pass
 
     def get_interarrival_time(self):
         """
@@ -90,4 +89,3 @@ class Packet(object):
         """
         # TODO Task 2.1.1: Your code goes here
         return self.iat
-        pass
