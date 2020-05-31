@@ -44,17 +44,15 @@ class SystemState(object):
         else:
             if not self.buffer.is_empty():
                 self.buffer.remove()
-                packet = Packet(self.sim)
-                packet.start_service()
-                self.server_busy = True
-                self.served_packet = 1
-            else:
-                packet = Packet(self.sim)
-                packet.start_service()
-                self.served_packet = 1
-                self.server_busy = True
+
+            packet = Packet(self.sim)
+            packet.start_service()
+            self.served_packet = 1
+            self.server_busy = True
+
             return True
-        #ფუჩუ
+
+
 
     def add_packet_to_queue(self):
         """
