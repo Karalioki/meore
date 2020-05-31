@@ -64,6 +64,10 @@ class SystemState(object):
             packet = Packet(self.sim)
             packet.get_waiting_time()
             self.buffer.add(packet)
+            # self.buffer_content += 1
+            return True
+        else:
+            return False
     def complete_service(self):
         """
         Reset server status to idle after a service completion.
