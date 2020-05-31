@@ -54,6 +54,7 @@ class SystemState(object):
                 self.served_packet = 1
                 self.server_busy = True
             return True
+        #ფუჩუ
 
     def add_packet_to_queue(self):
         """
