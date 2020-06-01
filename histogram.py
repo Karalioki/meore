@@ -110,6 +110,7 @@ class TimeIndependentHistogram(Histogram):
         """
         Add new value to histogram, i.e., the internal array.
         """
+        self.values.append(value)
         # TODO Task 2.4.1: Your code goes here
         pass
 
@@ -126,6 +127,9 @@ class TimeIndependentHistogram(Histogram):
         if len(self.values) != 0:
 
             if self.type == "q":
+                min_q = 0
+                max_q = self.sim.sim_param.S_MAX
+                self.histogram, self.bins = numpy.histogram(self.values, bins=max_q+1, range=(min_q-1, max_q+1), normed=None, weights=None, density=None)
 
                 # TODO Task 2.4.1: Your code goes here
                 """
