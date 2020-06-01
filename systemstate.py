@@ -1,8 +1,8 @@
 from finitequeue import FiniteQueue
 from packet import Packet
 
+
 class SystemState(object):
-    
     """
     This class represents the state of our system.
 
@@ -42,7 +42,7 @@ class SystemState(object):
         if self.server_busy:
             return False
         else:
-            self.served_packet = Packet(self.sim, self.sim.sim_state.now-self.last_arrival)
+            self.served_packet = Packet(self.sim, self.sim.sim_state.now - self.last_arrival)
             self.last_arrival = self.sim.sim_state.now
             self.served_packet.start_service()
             self.server_busy = True
@@ -54,7 +54,7 @@ class SystemState(object):
         :return: True if buffer/queue is not full and packet has been added successfully.
         """
         if self.get_queue_length() < self.sim.sim_param.S:
-            packet = Packet(self.sim,self.sim.sim_state.now-self.last_arrival)
+            packet = Packet(self.sim, self.sim.sim_state.now - self.last_arrival)
             self.last_arrival = self.sim.sim_state.now
             self.buffer.add(packet)
             # self.buffer_content += 1
@@ -75,7 +75,7 @@ class SystemState(object):
         If the buffer is not empty, take the next packet from there and serve it.
         :return: True if buffer is not empty and a stored packet is being served.
         """
-        if self.buffer.is_empty():
+        if self.buffer.is_empty() == True:
             return False
         else:
             self.served_packet = self.buffer.remove()
