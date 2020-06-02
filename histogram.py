@@ -72,8 +72,6 @@ class Histogram(object):
             Plot side-by-side histogram plot - mainly thought for mean queue length
             """
             # TODO Task 2.4.4: Your code goes here somewhere
-            self.sim.sim_param.S_VALUES = [5, 6, 7]
-
             for i in range(len(self.sim.sim_param.S_VALUES)):
                 if self.sim.sim_param.S_VALUES == self.sim.sim_param.S:
                     c = i
@@ -143,32 +141,29 @@ class TimeIndependentHistogram(Histogram):
                 Afterwards call the plot function using self.plot() with adequate parameters
                 """
                 min_q = 0
-                max_q = self.sim.sim_param.S_MAX
+                max_q = max(self.sim.sim_param.S_values)
                 self.histogram, self.bins = numpy.histogram(self.values, bins=max_q+1, range=(min_q-1, max_q+1))
                 self.plot(diag_type="side-by-side")
 
             elif self.type == "bp":
-                self.histogram, self.bins = numpy.histogram(self.values, bins=numpy.sqrt(len(self.values)), range=(0, 1))
-                self.plot(diag_type="histogram")
-
                 # TODO Task 2.4.1: Your code goes here
                 """
                 Use numpy.histogram to calculate self.histogram and self.bins.
                 Afterwards call the plot function using self.plot() with adequate parameters
                 """
-                pass
+                self.histogram, self.bins = numpy.histogram(self.values, bins=numpy.sqrt(len(self.values)), range=(0, 1))
+                self.plot(diag_type="histogram")
 
             elif self.type == "w":
+                # TODO Task 2.4.1: Your code goes here
+                """
+                Use numpy.histogram to calculate self.histogram and self.bins.
+                Afterwards call the plot function using self.plot() with adequate parameters
+                """
                 max_serving_time = 1000
                 max_range = max_serving_time * self.sim.sim_param.S_MAX
                 self.histogram, self.bins = numpy.histogram(self.values, bins=numpy.sqrt(len(self.values)), range=(0, max_range))
                 self.plot(diag_type="line")
-                # TODO Task 2.4.1: Your code goes here
-                """
-                Use numpy.histogram to calculate self.histogram and self.bins.
-                Afterwards call the plot function using self.plot() with adequate parameters
-                """
-                pass
 
             else:
                 raise TypeError("Undefined histogram types: %s" % self.type)
