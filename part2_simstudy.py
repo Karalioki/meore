@@ -19,12 +19,17 @@ def task_2_7_1():
     sim_param.SIM_TIME = 100
     sim_param.NO_OF_RUNS = 1000
     sim = Simulation(sim_param)
+    counter_q = TimeIndependentCounter()
+    hist_q = TimeIndependentHistogram(sim, "q")
+    counter_w = TimeIndependentCounter()
+    hist_w = TimeIndependentHistogram(sim, "w")
     for i in sim_param.S_VALUES:
-        sim_param.S = i
+        sim.sim_param.S = i
         do_simulation_study(sim)
-
-
-
+        counter_q.count(sim.counter_collection.cnt_ql.get_mean())
+        hist_q.count(sim.counter_collection.hist_ql.get_mean())
+        counter_w.count(sim.counter_collection.cnt_wt.get_mean())
+        hist_w.count(sim.counter_collection.hist_wt.get_mean())
 
 
 def task_2_7_2():
@@ -50,10 +55,7 @@ def do_simulation_study(sim, print_queue_length=False, print_waiting_time=True):
 
     # TODO Task 2.7.1: Your code goes here
     # TODO Task 2.7.2: Your code goes here
-    counter_q = TimeIndependentCounter()
-    hist_q = TimeIndependentHistogram(sim, "q")
-    counter_w = TimeIndependentCounter()
-    hist_w = TimeIndependentHistogram(sim, "w")
+
 
     pass
 
