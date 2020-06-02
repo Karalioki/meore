@@ -10,6 +10,8 @@ from simulation import Simulation
 from counter import TimeIndependentCounter
 from histogram import TimeIndependentHistogram
 import matplotlib.pyplot as plt
+
+
 def task_2_7_1():
     """
     Here, you should execute task 2.7.1 (and 2.7.2, if you want).
@@ -19,37 +21,18 @@ def task_2_7_1():
     sim_param.SIM_TIME = 100
     sim_param.NO_OF_RUNS = 1000
     sim = Simulation(sim_param)
-    counter_q = TimeIndependentCounter()
-    hist_q = TimeIndependentHistogram(sim, "q")
-    counter_w = TimeIndependentCounter()
-    hist_w = TimeIndependentHistogram(sim, "w")
-    for i in sim_param.S_VALUES:
-        sim.sim_param.S = i
-        for j in range(sim.sim_param.NO_OF_RUNS):
-            sim.reset()
-            sim.do_simulation()
-            counter_q.count(sim.counter_collection.cnt_ql.get_mean())
-            hist_q.count(sim.counter_collection.cnt_ql.get_mean())
-            counter_w.count(sim.counter_collection.cnt_wt.get_mean())
-            hist_w.count(sim.counter_collection.cnt_wt.get_mean())
-    plt.subplot(231)
-    plt.xlabel('mean queue length')
-    plt.ylabel("asd")
-    hist_q.report()
-    plt.subplot(232)
-    plt.subplot(233)
-    plt.show()
-
-
-
+    do_simulation_study(sim)
 
 def task_2_7_2():
     """
     Here, you can execute task 2.7.2 if you want to execute it in a separate function
     """
     # TODO Task 2.7.2: Your code goes here or in the function above
-    pass
-
+    sim_param = SimParam()
+    sim_param.NO_OF_RUNS = 1000
+    sim = Simulation(sim_param)
+    sim.sim_param.SIM_TIME = 1000
+    do_simulation_study(sim)
 
 def do_simulation_study(sim, print_queue_length=False, print_waiting_time=True):
     """
@@ -66,9 +49,33 @@ def do_simulation_study(sim, print_queue_length=False, print_waiting_time=True):
 
     # TODO Task 2.7.1: Your code goes here
     # TODO Task 2.7.2: Your code goes here
+    counter_q = TimeIndependentCounter()
+    hist_q = TimeIndependentHistogram(sim, "q")
+    counter_w = TimeIndependentCounter()
+    hist_w = TimeIndependentHistogram(sim, "w")
 
+    def count_statistics_for_runs():
+        for _ in range(sim.sim_param.NO_OF_RUNS):
+            sim.reset()
+            sim.do_simulation()
+            counter_q.count(sim.counter_collection.cnt_ql.get_mean())
+            hist_q.count(sim.counter_collection.cnt_ql.get_mean())
+            counter_w.count(sim.counter_collection.cnt_wt.get_mean())
+            hist_w.count(sim.counter_collection.cnt_wt.get_mean())
 
-    pass
+    for i in sim.sim_param.S_VALUES:
+        sim.sim_param.S = i
+        count_statistics_for_runs()
+        plt.subplot(1,2,1)
+        plt.xlabel('mean queue length')
+        plt.ylabel("asd")
+        hist_q.report()
+        plt.subplot(1,2,2)
+        plt.xlabel('mean waiting length')
+        plt.ylabel("asd")
+        plt.xlim([0, 100])
+        hist_w.report()
+    plt.show()
 
 
 if __name__ == '__main__':
