@@ -5,13 +5,24 @@ assignment. It contains the tasks 2.7.1 and 2.7.2.
 The function do_simulation_study() should be used to run the simulation routine, that is described in the assignment.
 """
 
+from simparam import SimParam
+from simulation import Simulation
 
 def task_2_7_1():
     """
     Here, you should execute task 2.7.1 (and 2.7.2, if you want).
     """
     # TODO Task 2.7.1: Your code goes here
-    pass
+    sim_param = SimParam()
+    sim_param.SIM_TIME = 100
+    sim_param.NO_OF_RUNS = 1000
+    sim = Simulation(sim_param)
+    for i in sim_param.S_VALUES:
+        sim_param.S = i
+        do_simulation_study(sim)
+
+
+
 
 
 def task_2_7_2():
@@ -34,6 +45,7 @@ def do_simulation_study(sim, print_queue_length=False, print_waiting_time=True):
     :param print_queue_length: print the statistics for the queue length to the console
     :param print_waiting_time: print the statistics for the waiting time to the console
     """
+
     # TODO Task 2.7.1: Your code goes here
     # TODO Task 2.7.2: Your code goes here
     pass
