@@ -33,7 +33,6 @@ class Packet(object):
         self.waiting = False
         self.served = True
         self.t_start = self.sim.sim_state.now
-        pass
         
     def complete_service(self):
         """
@@ -43,25 +42,17 @@ class Packet(object):
         self.served = False
         self.completed = True
         self.t_complete = self.sim.sim_state.now
-        return None
 
     def get_waiting_time(self):
         """
         Return the waiting time of the packet. An error occurs when the packet has not been served yet.
         :return: waiting time
         """
-        # if self.waiting:
-        #     raise SystemError("Packet has not been served yet.")
-        # else:
-        #     return self.t_start - self.t_arrival
+        # TODO Task 2.1.1: Your code goes here
         if self.completed:
             return self.t_start - self.t_arrival
         else:
             raise SystemError("Error")
-
-
-        # TODO Task 2.1.1: Your code goes here
-        pass
     
     def get_service_time(self):
         """
@@ -71,7 +62,7 @@ class Packet(object):
         # TODO Task 2.1.1: Your code goes here
         if self.completed:
             return self.t_complete - self.t_start
-        pass
+        return None
 
     def get_system_time(self):
         """
