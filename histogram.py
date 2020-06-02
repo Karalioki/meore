@@ -65,22 +65,16 @@ class Histogram(object):
             """
             Plot line plot - mainly thought for mean waiting time
             """
-            # pyplot.plot(self.bin_mids, self.histogram, "+-", label='S=' + str(self.sim.sim_param.S))
+            pyplot.plot(self.bin_mids, self.histogram, "+-", label='S=' + str(self.sim.sim_param.S))
 
         elif diag_type == "side-by-side":
             """
             Plot side-by-side histogram plot - mainly thought for mean queue length
             """
             # TODO Task 2.4.4: Your code goes here somewhere
-            for i in range(len(self.sim.sim_param.S_VALUES)):
-                if self.sim.sim_param.S_VALUES == self.sim.sim_param.S:
-                    c = i
+            index_of_S = self.sim.sim_param.S_VALUES.index(self.sim.sim_param.S_VALUES)
             x = self.bins[0:len(self.bins)-1]
-            # x = numpy.arange(len(labels))  # the label locations
-            # width = 0.35  # the width of the bars
-            # if labels[] != self.sim.sim_param.S:
-            #     labels.append(labels)
-            pyplot.subplot(x, self.histogram, width, label='S=' + str(self.sim.sim_param.S), color=Histogram.colors[c])
+            pyplot.bar(x, self.histogram, width, label='S=' + str(self.sim.sim_param.S), color=Histogram.colors[index_of_S])
 
         elif diag_type == "histogram":
             """
@@ -161,7 +155,7 @@ class TimeIndependentHistogram(Histogram):
                 Afterwards call the plot function using self.plot() with adequate parameters
                 """
                 max_serving_time = 1000
-                max_range = max_serving_time * self.sim.sim_param.S_MAX
+                max_range = max_serving_time * max(self.sim.sim_param.S_values)
                 self.histogram, self.bins = numpy.histogram(self.values, bins=numpy.sqrt(len(self.values)), range=(0, max_range))
                 self.plot(diag_type="line")
 
