@@ -73,8 +73,8 @@ class Histogram(object):
             """
             # TODO Task 2.4.4: Your code goes here somewhere
             index_of_S = self.sim.sim_param.S_VALUES.index(self.sim.sim_param.S)
-            x = self.bins[0:len(self.bins)-1]
-            pyplot.bar(x, self.histogram, width=0.5, align='center', label='S=' + str(self.sim.sim_param.S), color=Histogram.colors[index_of_S])
+            bar_width = 0.35
+            pyplot.bar(self.bins[:-1] + bar_width*index_of_S, self.histogram, bar_width, label='S=' + str(self.sim.sim_param.S), color=Histogram.colors[index_of_S])
 
         elif diag_type == "histogram":
             """
