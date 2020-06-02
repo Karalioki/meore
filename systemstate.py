@@ -68,7 +68,7 @@ class SystemState(object):
         Reset server status to idle after a service completion.
         """
         self.server_busy = False
-        self.served_packet = self.served_packet.complete_service()
+        self.served_packet.complete_service()
         self.sim.counter_collection.count_packet(self.served_packet)
 
     def start_service(self):
