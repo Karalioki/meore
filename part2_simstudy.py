@@ -7,6 +7,8 @@ The function do_simulation_study() should be used to run the simulation routine,
 
 from simparam import SimParam
 from simulation import Simulation
+from counter import TimeIndependentCounter
+from histogram import TimeIndependentHistogram
 
 def task_2_7_1():
     """
@@ -48,6 +50,11 @@ def do_simulation_study(sim, print_queue_length=False, print_waiting_time=True):
 
     # TODO Task 2.7.1: Your code goes here
     # TODO Task 2.7.2: Your code goes here
+    counter_q = TimeIndependentCounter()
+    hist_q = TimeIndependentHistogram(sim, "q")
+    counter_w = TimeIndependentCounter()
+    hist_w = TimeIndependentHistogram(sim, "w")
+
     pass
 
 
