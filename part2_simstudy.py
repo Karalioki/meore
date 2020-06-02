@@ -68,7 +68,7 @@ def do_simulation_study(sim, print_queue_length=False, print_waiting_time=True):
         count_statistics_for_runs()
         plt.subplot(1,2,1)
         plt.xlabel('mean queue length')
-        plt.ylabel("asd")
+        # plt.ylabel("asd")
         hist_q.report()
         plt.subplot(1,2,2)
         plt.xlabel('mean waiting length')
