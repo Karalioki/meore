@@ -21,7 +21,7 @@ class Simulation(object):
         self.system_state = SystemState(self)
         self.event_chain = EventChain()
         self.sim_result = SimResult(self)
-        #self.counter_collection = CounterCollection()
+        self.counter_collection = CounterCollection(self)
         """
         if no_seed:
             self.rng = RNG(None, None)
@@ -38,7 +38,7 @@ class Simulation(object):
         self.system_state = SystemState(self)
         self.event_chain = EventChain()
         self.sim_result = SimResult(self)
-        #self.counter_collection = CounterCollection()
+        self.counter_collection = CounterCollection(self)
         """
         self.rng.iat_rns.set_parameters(None)
         self.rng.st_rns.set_parameters(None)
@@ -63,7 +63,7 @@ class Simulation(object):
                 # if event exists and timestamps are ok, process the event
                 if self.sim_state.now <= e.timestamp:
                     self.sim_state.now = e.timestamp
-                    CounterCollection.count_queue()
+                    self.counter_collection.count_queue()
                     e.process()
                 else:
                     print('NOW: ' + str(self.sim_state.now) + ', EVENT TIMESTAMP: ' + str(e.timestamp))
