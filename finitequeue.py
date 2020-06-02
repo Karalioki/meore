@@ -24,6 +24,7 @@ class FiniteQueue(object):
         :param packet: packet which is supposed to be queued
         :return: true if packet has been enqueued, false if rejected
         """
+        # TODO Task 2.2.1: Your code goes here
         # if not self.buffer.full():
         if self.buffer.qsize() < self.sim.sim_param.S:
             self.buffer.put(packet)
@@ -31,42 +32,34 @@ class FiniteQueue(object):
         else:
             return False
 
-        # TODO Task 2.2.1: Your code goes here
-        pass
-
     def remove(self):
         """
         Return the first packet in line and remove it from the FIFO
         :return: first packet in line
         """
-
-        return self.buffer.get()
         # TODO Task 2.2.1: Your code goes here
-        pass
+        return self.buffer.get()
 
     def get_queue_length(self):
         """
         :return: fill status of the queue (queue length)
         """
-        return self.buffer.qsize()
         # TODO Task 2.2.1: Your code goes here
-        pass
+        return self.buffer.qsize()
 
     def is_empty(self):
         """
         :return: true if queue is empty
         """
-        return self.buffer.empty()
         # TODO Task 2.2.1: Your code goes here
-        pass
+        return self.buffer.empty()
 
     def flush(self):
         """
         erase/delete all packets from the FIFO
         """
+        # TODO Task 2.2.1: Your code goes here
         if not self.is_empty():
             a = self.get_queue_length()
-            for i in range(a):
+            for _ in range(a):
                 self.remove()
-        # TODO Task 2.2.1: Your code goes here
-        pass
