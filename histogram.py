@@ -121,9 +121,8 @@ class TimeIndependentHistogram(Histogram):
         """
         Add new value to histogram, i.e., the internal array.
         """
-        self.values.append(value)
         # TODO Task 2.4.1: Your code goes here
-        pass
+        self.values.append(value)
 
     def report(self):
         """
@@ -138,16 +137,15 @@ class TimeIndependentHistogram(Histogram):
         if len(self.values) != 0:
 
             if self.type == "q":
-                min_q = 0
-                max_q = self.sim.sim_param.S_MAX
-                self.histogram, self.bins = numpy.histogram(self.values, bins=max_q+1, range=(min_q-1, max_q+1))
-                self.plot(diag_type="side-by-side")
                 # TODO Task 2.4.1: Your code goes here
                 """
                 Use numpy.histogram to calculate self.histogram and self.bins.
                 Afterwards call the plot function using self.plot() with adequate parameters
                 """
-                pass
+                min_q = 0
+                max_q = self.sim.sim_param.S_MAX
+                self.histogram, self.bins = numpy.histogram(self.values, bins=max_q+1, range=(min_q-1, max_q+1))
+                self.plot(diag_type="side-by-side")
 
             elif self.type == "bp":
                 self.histogram, self.bins = numpy.histogram(self.values, bins=numpy.sqrt(len(self.values)), range=(0, 1))
