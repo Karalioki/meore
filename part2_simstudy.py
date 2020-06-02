@@ -9,7 +9,7 @@ from simparam import SimParam
 from simulation import Simulation
 from counter import TimeIndependentCounter
 from histogram import TimeIndependentHistogram
-
+import matplotlib.pyplot as plt
 def task_2_7_1():
     """
     Here, you should execute task 2.7.1 (and 2.7.2, if you want).
@@ -25,11 +25,20 @@ def task_2_7_1():
     hist_w = TimeIndependentHistogram(sim, "w")
     for i in sim_param.S_VALUES:
         sim.sim_param.S = i
-        do_simulation_study(sim)
-        counter_q.count(sim.counter_collection.cnt_ql.get_mean())
-        hist_q.count(sim.counter_collection.hist_ql.get_mean())
-        counter_w.count(sim.counter_collection.cnt_wt.get_mean())
-        hist_w.count(sim.counter_collection.hist_wt.get_mean())
+        for j in range(sim.sim_param.NO_OF_RUNS):
+            sim.reset()
+            sim.do_simulation()
+            counter_q.count(sim.counter_collection.cnt_ql.get_mean())
+            hist_q.count(sim.counter_collection.hist_ql.get_mean())
+            counter_w.count(sim.counter_collection.cnt_wt.get_mean())
+            hist_w.count(sim.counter_collection.hist_wt.get_mean())
+    plt.subplot(231)
+    plt.subplot(232)
+    plt.subplot(233)
+    plt.xlabel('mean queue length')
+    plt.ylabel("asd")
+
+
 
 
 def task_2_7_2():
