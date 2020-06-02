@@ -108,5 +108,6 @@ class CounterCollection(object):
         """
         self.cnt_ql.count(self.sim.system_state.get_queue_length())
         self.hist_ql.count(self.sim.system_state.get_queue_length())
+        # self.cnt_sys_util()
 
         # TODO Task 2.5.1: Your code goes here

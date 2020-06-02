@@ -69,6 +69,7 @@ class SystemState(object):
         """
         self.server_busy = False
         self.served_packet = self.served_packet.complete_service()
+        self.sim.counter_collection.count_packet(self.served_packet)
 
     def start_service(self):
         """

@@ -3,7 +3,7 @@ from systemstate import SystemState
 from event import EventChain, CustomerArrival, SimulationTermination
 from simresult import SimResult
 from simparam import SimParam
-#from countercollection import CounterCollection
+from countercollection import CounterCollection
 #from rng import RNG, ExponentialRNS, UniformRNS
 
 
@@ -63,6 +63,7 @@ class Simulation(object):
                 # if event exists and timestamps are ok, process the event
                 if self.sim_state.now <= e.timestamp:
                     self.sim_state.now = e.timestamp
+                    CounterCollection.count_queue()
                     e.process()
                 else:
                     print('NOW: ' + str(self.sim_state.now) + ', EVENT TIMESTAMP: ' + str(e.timestamp))
