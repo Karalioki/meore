@@ -72,7 +72,7 @@ class Histogram(object):
             Plot side-by-side histogram plot - mainly thought for mean queue length
             """
             # TODO Task 2.4.4: Your code goes here somewhere
-            index_of_S = self.sim.sim_param.S_VALUES.index(self.sim.sim_param.S_VALUES)
+            index_of_S = self.sim.sim_param.S_VALUES.index(self.sim.sim_param.S)
             x = self.bins[0:len(self.bins)-1]
             pyplot.bar(x, self.histogram, width, label='S=' + str(self.sim.sim_param.S), color=Histogram.colors[index_of_S])
 
@@ -135,7 +135,7 @@ class TimeIndependentHistogram(Histogram):
                 Afterwards call the plot function using self.plot() with adequate parameters
                 """
                 min_q = 0
-                max_q = max(self.sim.sim_param.S_values)
+                max_q = max(self.sim.sim_param.S_VALUES)
                 self.histogram, self.bins = numpy.histogram(self.values, bins=max_q+1, range=(min_q-1, max_q+1))
                 self.plot(diag_type="side-by-side")
 
@@ -155,7 +155,7 @@ class TimeIndependentHistogram(Histogram):
                 Afterwards call the plot function using self.plot() with adequate parameters
                 """
                 max_serving_time = 1000
-                max_range = max_serving_time * max(self.sim.sim_param.S_values)
+                max_range = max_serving_time * max(self.sim.sim_param.S_VALUES)
                 self.histogram, self.bins = numpy.histogram(self.values, bins=numpy.sqrt(len(self.values)), range=(0, max_range))
                 self.plot(diag_type="line")
 

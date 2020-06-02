@@ -29,14 +29,16 @@ def task_2_7_1():
             sim.reset()
             sim.do_simulation()
             counter_q.count(sim.counter_collection.cnt_ql.get_mean())
-            hist_q.count(sim.counter_collection.hist_ql.get_mean())
+            hist_q.count(sim.counter_collection.cnt_ql.get_mean())
             counter_w.count(sim.counter_collection.cnt_wt.get_mean())
-            hist_w.count(sim.counter_collection.hist_wt.get_mean())
+            hist_w.count(sim.counter_collection.cnt_wt.get_mean())
     plt.subplot(231)
-    plt.subplot(232)
-    plt.subplot(233)
     plt.xlabel('mean queue length')
     plt.ylabel("asd")
+    hist_q.report()
+    plt.subplot(232)
+    plt.subplot(233)
+    plt.show()
 
 
 
