@@ -91,26 +91,23 @@ class TimeIndependentCounter(Counter):
         """
         Return the mean value of the internal array.
         """
-        return np.mean(self.values)
         # TODO Task 2.3.1: Your code goes here
-        # pass
+        return np.mean(self.values)
 
     def get_var(self):
         """
         Return the variance of the internal array.
         Note, that we take the estimated variance, not the exact variance.
         """
-        return np.var(self.values, ddof=1)
         # TODO Task 2.3.1: Your code goes here
-        # pass
+        return np.var(self.values, ddof=1)
 
     def get_stddev(self):
         """
         Return the standard deviation of the internal array.
         """
-        return np.std(self.values, ddof=1)
         # TODO Task 2.3.1: Your code goes here
-        # pass
+        return np.std(self.values, ddof=1)
 
     def report_confidence_interval(self, alpha=0.05, print_report=True):
         """
@@ -181,39 +178,35 @@ class TimeDependentCounter(Counter):
         Adds new value to internal array.
         Duration from last to current value is considered.
         """
+        # TODO Task 2.3.2: Your code goes here
         self.values.append(value * (self.sim.sim_state.now - self.last_timestamp))
         self.X2.append((value**2)*(self.sim.sim_state.now - self.last_timestamp))
         self.last_timestamp = self.sim.sim_state.now
-        # TODO Task 2.3.2: Your code goes here
-        pass
 
     def get_mean(self):
         """
         Return the mean value of the counter, normalized by the total duration of the simulation.
         """
+        # TODO Task 2.3.2: Your code goes here
         if self.last_timestamp - self.first_timestamp != 0:
             return float(sum(self.values))/float((self.last_timestamp - self.first_timestamp))
         else:
             return None
-        # TODO Task 2.3.2: Your code goes here
-        pass
 
     def get_var(self):
         """
         Return the variance of the TDC.
         """
+        # TODO Task 2.3.2: Your code goes here
         mean_X2 = float(sum(self.X2)) / float((self.last_timestamp - self.first_timestamp))
         return mean_X2 - (self.get_mean())**2
-        # TODO Task 2.3.2: Your code goes here
-        pass
 
     def get_stddev(self):
         """
         Return the standard deviation of the TDC.
         """
-        return (self.get_var())**(0.5)
         # TODO Task 2.3.2: Your code goes here
-        pass
+        return (self.get_var())**(0.5)
 
     def reset(self):
         """
