@@ -29,7 +29,6 @@ class Simulation(object):
             self.rng = RNG(None, None)
         """
 
-
     def reset(self):
         """
         Reset the Simulation object.

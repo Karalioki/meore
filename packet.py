@@ -29,7 +29,6 @@ class Packet(object):
         """
         Change the status of the packet once the serving process starts.
         """
-        # TODO Task 2.1.1: Your code goes here
         self.waiting = False
         self.served = True
         self.t_start = self.sim.sim_state.now
@@ -38,7 +37,6 @@ class Packet(object):
         """
         Change the status of the packet once the serving process is completed.
         """
-        # TODO Task 2.1.1: Your code goes here
         self.served = False
         self.completed = True
         self.t_complete = self.sim.sim_state.now
@@ -48,35 +46,34 @@ class Packet(object):
         Return the waiting time of the packet. An error occurs when the packet has not been served yet.
         :return: waiting time
         """
-        # TODO Task 2.1.1: Your code goes here
-        if self.completed:
-            return self.t_start - self.t_arrival
+        if self.waiting:
+            raise SystemError("Packet has not been served yet.")
         else:
-            raise SystemError("Error")
+            return self.t_start - self.t_arrival
     
     def get_service_time(self):
         """
         Calculate and return the service time
         :return: service time
         """
-        # TODO Task 2.1.1: Your code goes here
-        if self.completed:
+        if not self.completed:
+            raise SystemError("Packet is not completed yet.")
+        else:
             return self.t_complete - self.t_start
-        return None
 
     def get_system_time(self):
         """
         Calculate and return the system time (waiting time + service time)
         :return: system time (waiting time + serving time)
         """
-        # TODO Task 2.1.1: Your code goes here
-        if self.completed:
-            return self.get_waiting_time() + self.get_service_time()
+        if not self.completed:
+            raise SystemError("Packet is not completed yet.")
+        else:
+            return self.t_complete - self.t_arrival
 
     def get_interarrival_time(self):
         """
         Return the inter-arrival time between the current and the last customer/packet
         :return: inter-arrival time
         """
-        # TODO Task 2.1.1: Your code goes here
         return self.iat

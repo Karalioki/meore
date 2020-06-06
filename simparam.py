@@ -1,15 +1,15 @@
 class SimParam(object):
-
     """
     Contains all important simulation parameters
     """
 
     def __init__(self):
-
         # current buffer spaces and minimal buffer spaces
         self.S_MIN = 4
         self.S = self.S_MIN  # waiting queue length
+        # for part 2
         self.S_VALUES = [5, 6, 7]
+        self.S_MAX = 7
 
         # inter-arrival-time and simulation time in ms
         self.IAT = 490
@@ -25,7 +25,7 @@ class SimParam(object):
         self.MAX_DROPPED = 10
 
         # set seed for random number generation
-        self.SEED = 1
+        self.SEED = 0
 
     def print_sim_config(self):
         """

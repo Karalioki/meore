@@ -3,6 +3,7 @@ from packet import Packet
 
 
 class SystemState(object):
+    
     """
     This class represents the state of our system.
 
@@ -25,14 +26,10 @@ class SystemState(object):
         :return: system_state object
         """
         self.buffer = FiniteQueue(sim)
-        self.served_packet = None
-        self.last_arrival = 0
-        self.buffer_content = 0
         self.server_busy = False
+        self.served_packet = None
         self.sim = sim
-
-    def get_queue_length(self):
-        return self.buffer.get_queue_length()
+        self.last_arrival = 0
 
     def add_packet_to_server(self):
         """
@@ -42,10 +39,10 @@ class SystemState(object):
         if self.server_busy:
             return False
         else:
+            self.server_busy = True
             self.served_packet = Packet(self.sim, self.sim.sim_state.now - self.last_arrival)
             self.last_arrival = self.sim.sim_state.now
             self.served_packet.start_service()
-            self.server_busy = True
             return True
 
     def add_packet_to_queue(self):
@@ -53,11 +50,8 @@ class SystemState(object):
         Try to add a packet to the buffer.
         :return: True if buffer/queue is not full and packet has been added successfully.
         """
-        if self.get_queue_length() < self.sim.sim_param.S:
-            packet = Packet(self.sim, self.sim.sim_state.now - self.last_arrival)
+        if self.buffer.add(Packet(self.sim, self.sim.sim_state.now - self.last_arrival)):
             self.last_arrival = self.sim.sim_state.now
-            self.buffer.add(packet)
-            # self.buffer_content += 1
             return True
         else:
             self.last_arrival = self.sim.sim_state.now
@@ -68,18 +62,28 @@ class SystemState(object):
         Reset server status to idle after a service completion.
         """
         self.server_busy = False
-        self.served_packet.complete_service()
-        self.sim.counter_collection.count_packet(self.served_packet)
+        p = self.served_packet
+        p.complete_service()
+        self.sim.counter_collection.count_packet(p)
+        self.served_packet = None
+        return p
 
     def start_service(self):
         """
         If the buffer is not empty, take the next packet from there and serve it.
         :return: True if buffer is not empty and a stored packet is being served.
         """
-        if self.buffer.is_empty() == True:
+        if self.buffer.is_empty():
             return False
         else:
             self.served_packet = self.buffer.remove()
             self.served_packet.start_service()
             self.server_busy = True
             return True
+
+    def get_queue_length(self):
+        """
+        Return the current buffer content.
+        :return: Fill status of the buffer
+        """
+        return self.buffer.get_queue_length()
