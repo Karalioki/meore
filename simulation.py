@@ -4,7 +4,7 @@ from event import EventChain, CustomerArrival, SimulationTermination
 from simresult import SimResult
 from simparam import SimParam
 from countercollection import CounterCollection
-#from rng import RNG, ExponentialRNS, UniformRNS
+from rng import RNG, ExponentialRNS, UniformRNS
 
 
 class Simulation(object):
@@ -22,12 +22,12 @@ class Simulation(object):
         self.event_chain = EventChain()
         self.sim_result = SimResult(self)
         self.counter_collection = CounterCollection(self)
-        """
+
         if no_seed:
-            self.rng = RNG(None, None)
+            self.rng = RNG(ExponentialRNS(1), ExponentialRNS(1.0/float(self.sim_param.RHO)))
         else:
-            self.rng = RNG(None, None)
-        """
+            self.rng = RNG(ExponentialRNS(1.0, self.sim_param.SEED_IAT), ExponentialRNS(1.0/float(self.sim_param.RHO), self.sim_param.SEED_ST))
+
 
     def reset(self):
         """
@@ -38,10 +38,10 @@ class Simulation(object):
         self.event_chain = EventChain()
         self.sim_result = SimResult(self)
         self.counter_collection = CounterCollection(self)
-        """
-        self.rng.iat_rns.set_parameters(None)
-        self.rng.st_rns.set_parameters(None)
-        """
+
+        self.rng.iat_rns.set_parameters(1)
+        self.rng.st_rns.set_parameters(1.0/float(self.sim_param.RHO))
+
 
     def do_simulation(self):
         """
