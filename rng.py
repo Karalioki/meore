@@ -110,7 +110,6 @@ class ExponentialRNS(RNS):
         # TODO Task 3.1.1: Your code goes here
         R = self.r.uniform(0, 1)
         return -(math.log(1-R))/self.Lambda
-        pass
         
 
 class UniformRNS(RNS):
@@ -134,7 +133,6 @@ class UniformRNS(RNS):
         """
         Also modify the list of input parameters according to the needs of this distribution.
         """
-        pass
         
     def set_parameters(self, a, b):
         """
@@ -146,14 +144,11 @@ class UniformRNS(RNS):
         """
         Also modify the list of input parameters according to the needs of this distribution.
         """
-        pass
         
     def next(self):
         """
         Generate the next random number using the inverse transform method.
         """
         # TODO Task 3.1.1: Your code goes here
-        # x-a/b-a = r
         R = self.r.uniform(0, 1)
         return self.a + R * (self.b -self.a)
-        pass

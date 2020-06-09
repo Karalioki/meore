@@ -90,13 +90,13 @@ class CustomerArrival(SimEvent):
         Each customer is counted either as accepted or as dropped.
         """
 
-        ev = CustomerArrival(self.sim, self.sim.sim_state.now + self.sim.rng.get_iat()*1000)
+        ev = CustomerArrival(self.sim, self.sim.sim_state.now + self.sim.rng.get_iat() * 1000)
         self.sim.event_chain.insert(ev)
 
         if self.sim.system_state.add_packet_to_server():
             # packet is added to server and served
             ev = ServiceCompletion(
-                self.sim, self.sim.sim_state.now + self.sim.rng.get_st()*1000)
+                self.sim, self.sim.sim_state.now + self.sim.rng.get_st() * 1000)
             self.sim.event_chain.insert(ev)
             self.sim.sim_state.packet_accepted()
 

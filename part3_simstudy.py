@@ -14,30 +14,28 @@ def task_3_2_1():
     This function plots two histograms for verification of the random distributions.
     One histogram is plotted for a uniform distribution, the other one for an exponential distribution.
 
-
     Generate a sufficient number
-of samples by using the classes RNG and/or RNS and choose a reasonable number of bins for
-your histograms.
+    of samples by using the classes RNG and/or RNS and choose a reasonable number of bins for
+    your histograms.
     """
     # TODO Task 3.2.1: Your code goes here
-    sim = Simulation()
-    uni = sim.rng.UniformRNS(0, 5)
-    exp = sim.rng.ExponentialRNS(5)
+    uni = UniformRNS(0, 5)
+    exp = ExponentialRNS(5)
     expArray = []
     uniArray = []
-    n = 100
-    for i in n:
-        expArray.append(uni())
-        uniArray.append(exp())
+    n = 10000
+    bin_number = int(numpy.sqrt(n) / 2) 
+    weights = [1.0 / n] * n
+
+    for _ in range(n):
+        expArray.append(uni.next())
+        uniArray.append(exp.next())
 
     pyplot.subplot(121)
-    pyplot.hist(expArray, bins=10)
+    pyplot.hist(expArray, bins=bin_number, weights=weights)
     pyplot.subplot(122)
-    pyplot.hist(uniArray, bins=10)
+    pyplot.hist(uniArray, bins=bin_number, weights=weights)
     pyplot.show()
-
-
-    pass
 
 
 def task_3_2_2():
@@ -46,17 +44,33 @@ def task_3_2_2():
     The first result string keeps the results for 100s, the second one for 1000s simulation time.
     """
     # TODO Task 3.2.2: Your code goes here
+    def print_array(arr):
+        for val in arr:
+            print(val[0], val[1])
+        print()
+
+    def get_util_values(sim):
+        rho_values = [0.01, 0.5, 0.8, 0.9]
+        system_util_values = []
+        for rho_value in rho_values:
+            sim.sim_param.RHO = rho_value
+            sim.reset()
+            sim.do_simulation()
+            system_util_values.append(('rho=' + str(rho_value), 'system utilization=' + str(sim.sim_result.system_utilization)))
+        return system_util_values
+
     sim = Simulation()
     sim.sim_param.S = 5
     sim.sim_param.SIM_TIME = 100000
-    rho = [0.01, 0.5, 0.8, 0.9]
-    for i in rho:
-        sim.sim_param.RHO = i
-        sim.reset()
-        sim.do_simulation()
-    sim.sim_result.system_utilization()
-    pass
 
+    system_util_values = get_util_values(sim)
+    print("For t=100s system utilization values are:")
+    print_array(system_util_values)
+
+    sim.sim_param.SIM_TIME = 1000000
+    system_util_values = get_util_values(sim)
+    print("For t=1000s system utilization values are:")
+    print_array(system_util_values)
 
 if __name__ == '__main__':
     task_3_2_1()
