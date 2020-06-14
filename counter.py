@@ -215,8 +215,8 @@ class TimeIndependentCrosscorrelationCounter(TimeIndependentCounter):
         :return: cross covariance
         """
         # TODO Task 4.1.1: Your code goes here
-        return self.XY.get_mean() - self.X.get_mean()*self.X.get_mean()
-        pass
+        return self.XY.get_mean() - self.X.get_mean()*self.Y.get_mean()
+
 
     def get_cor(self):
         """
@@ -224,7 +224,7 @@ class TimeIndependentCrosscorrelationCounter(TimeIndependentCounter):
         :return: cross correlation
         """
         # TODO Task 4.1.1: Your code goes here
-        return self.get_cov()/math.sqrt(self.X.get_var()*self.X.get_var())
+        return self.get_cov()/math.sqrt(self.X.get_var()*self.Y.get_var())
         pass
 
     def report(self):
@@ -280,17 +280,20 @@ class TimeIndependentAutocorrelationCounter(TimeIndependentCounter):
         :return: auto covariance
         """
         # TODO Task 4.1.2: Your code goes here
-        self.shifted = self.X.values
-
-        for j in range(lag - 1):
+        self.shifted = self.X.values[:]
+        print(self.shifted)
+        for j in range(0, lag):
             temp = self.shifted[len(self.shifted) - 1]
-            for i in range(len(self.shifted), 0, -1):
+            for i in range(len(self.shifted) - 1, 0, -1):
                 self.shifted[i] = self.shifted[i - 1]
             self.shifted[0] = temp
 
+
         for i, j in zip(self.shifted, self.X.values):
             self.XX.append(i * j)
-        return numpy.mean(self.XX) - self.X.get_mean()*numpy.mean(self.shifted)
+
+        result = numpy.mean(self.XX) - self.X.get_mean()*numpy.mean(self.shifted)
+        return result
 
 
 
