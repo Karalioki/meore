@@ -288,7 +288,7 @@ class TimeIndependentAutocorrelationCounter(TimeIndependentCounter):
                 self.shifted[i] = self.shifted[i - 1]
             self.shifted[0] = temp
 
-        for i, j in self.shifted, self.values:
+        for i, j in zip(self.shifted, self.values):
             self.XX.append(i * j)
 
 
