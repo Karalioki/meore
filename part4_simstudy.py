@@ -36,10 +36,12 @@ def task_4_3_1():
     sim = Simulation()
     sim.sim_param.S = 10000
     sim.sim_param.SIM_TIME = 10000000
-    sim.sim_param.RHO = [0.01, 0.5, 0.8, 0.95]
-    for i in sim.sim_param.RHO:
+    rho = [0.01, 0.5, 0.8, 0.95]
+    for i in rho:
+        sim.sim_param.RHO = i
         sim.reset()
         sim.do_simulation()
+        sim.counter_collection.report()
 
     pass
 
