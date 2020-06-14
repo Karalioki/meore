@@ -248,10 +248,12 @@ class TimeIndependentAutocorrelationCounter(TimeIndependentCounter):
         super(TimeIndependentAutocorrelationCounter, self).__init__(name)
         # TODO Task 4.1.2: Your code goes here
         self.X = TimeIndependentCounter()
-        self.Xshifted = TimeIndependentCounter()
-        self.XXshifted = TimeIndependentCounter()
+        self.max_lag = max_lag
+        self.shifted = []
+        self.XX = []
 
-        pass
+
+
 
     def reset(self):
         """
@@ -260,9 +262,9 @@ class TimeIndependentAutocorrelationCounter(TimeIndependentCounter):
         TimeIndependentCounter.reset(self)
         # TODO Task 4.1.2: Your code goes here
         self.X = TimeIndependentCounter()
-        self.Xshifted = TimeIndependentCounter()
-        self.XXshifted = TimeIndependentCounter()
-        pass
+        self.shifted = []
+        self.XX = []
+
 
     def count(self, x):
         """
@@ -270,15 +272,24 @@ class TimeIndependentAutocorrelationCounter(TimeIndependentCounter):
         """
         # TODO Task 4.1.2: Your code goes here
         self.X.count(x)
-        pass
+
 
     def get_auto_cov(self, lag):
         """
-        Calculate the auto covariance for a given lag.
+        Calculal te the auto covariance for a given lag.
         :return: auto covariance
         """
         # TODO Task 4.1.2: Your code goes here
-        pass
+        self.shifted = self.X.values
+
+        for i  in range(lag - 1):
+            temp = self.shifted[len(self.shifted) - 1]
+            for i in range(len(self.shifted), 0, -1):
+                self.shifted[i] = self.shifted[i - 1]
+            self.shifted[0] = temp
+
+
+
 
     def get_auto_cor(self, lag):
         """
