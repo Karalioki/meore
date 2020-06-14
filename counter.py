@@ -282,7 +282,7 @@ class TimeIndependentAutocorrelationCounter(TimeIndependentCounter):
         # TODO Task 4.1.2: Your code goes here
         self.shifted = self.X.values
 
-        for j in range(lag - 1):
+        for i  in range(lag - 1):
             temp = self.shifted[len(self.shifted) - 1]
             for i in range(len(self.shifted), 0, -1):
                 self.shifted[i] = self.shifted[i - 1]
