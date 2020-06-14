@@ -1,4 +1,5 @@
 from counter import TimeIndependentAutocorrelationCounter
+from simulation import Simulation
 """
 This file should be used to keep all necessary code that is used for the verification and simulation section in part 4
 of the programming assignment. It contains tasks 4.2.1, 4.3.1 and 4.3.2.
@@ -32,6 +33,14 @@ def task_4_3_1():
     SIM_TIME is set higher in order to avoid a large influence of startup effects
     """
     # TODO Task 4.3.1: Your code goes here
+    sim = Simulation()
+    sim.sim_param.S = 10000
+    sim.sim_param.SIM_TIME = 10000000
+    sim.sim_param.RHO = [0.01, 0.5, 0.8, 0.95]
+    for i in sim.sim_param.RHO:
+        sim.reset()
+        sim.do_simulation()
+
     pass
 
 
