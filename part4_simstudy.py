@@ -1,3 +1,4 @@
+from counter import TimeIndependentAutocorrelationCounter
 """
 This file should be used to keep all necessary code that is used for the verification and simulation section in part 4
 of the programming assignment. It contains tasks 4.2.1, 4.3.1 and 4.3.2.
@@ -9,7 +10,19 @@ def task_4_2_1():
     Execute exercise 4.2.1, which is basically just a test for the auto correlation.
     """
     # TODO Task 4.2.1: Your code goes here
-    pass
+    autocor = TimeIndependentAutocorrelationCounter(max_lag=5)
+    for i in range(5000):
+        autocor.count(1)
+        autocor.count(-1)
+    autocor.report()
+
+    autocor.reset()
+    for i in range(5000):
+        autocor.count(1)
+        autocor.count(1)
+        autocor.count(-1)
+    autocor.report()
+
 
 
 def task_4_3_1():
