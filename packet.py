@@ -46,7 +46,7 @@ class Packet(object):
         Return the waiting time of the packet. An error occurs when the packet has not been served yet.
         :return: waiting time
         """
-        if self.waiting:
+        if not self.served and not self.completed:
             raise SystemError("Packet has not been served yet.")
         else:
             return self.t_start - self.t_arrival

@@ -84,16 +84,13 @@ class Histogram(object):
             ind = self.bins[0:len(self.bins)-1] + .1 + index*width
             pyplot.bar(ind, self.histogram, width=width, label='S='+str(self.sim.sim_param.S), color=Histogram.colors[index])
 
-        elif diag_type == "histogram":
+        else:
             """
             Plot histogram - mainly thought for mean queue length
             (easier but worse interpretation than side-by-side)
             """
             weights = numpy.full(len(self.values), 1.0 / float(len(self.values)))
             pyplot.hist(self.values, self.bins, alpha=0.5, label='S='+str(self.sim.sim_param.S), rwidth=.7, weights=weights)
-
-        else:
-            raise TypeError("Undefined histogram plotting types: %s" % diag_type)
 
         pyplot.legend(loc='upper right')
         if show_plot:
@@ -129,31 +126,24 @@ class TimeIndependentHistogram(Histogram):
 
         Calculation depends on type (makes results easier to read.
         "q" stands a queue length histogram resulting in a limited number of bins (only few possible values)
-        "bp" stands for blocking probability histogram
-        "w" stands for mean waiting time histogram
         After generating the report, the plot function is called (see this function in super class).
         """
         if len(self.values) != 0:
             weights = numpy.full(len(self.values), 1.0 / float(len(self.values)))
-
             if self.type == "q":
-                # for queue length histogram each bin represents a integer queue length
+                # for queue length a different resolution is chosen than for other values
                 self.histogram, self.bins = numpy.histogram(self.values, weights=weights, bins=self.sim.sim_param.S_MAX + 1,
                                                             range=(-.5, self.sim.sim_param.S_MAX + .5))
                 self.plot(diag_type="side-by-side")
-
             elif self.type == "bp":
-                # for blocking probability histogram the number of bins should be carefully chosen
+                # for queue length a different resolution is chosen than for other values
                 self.histogram, self.bins = numpy.histogram(self.values, weights=weights, bins=25,
                                                             range=(0, 1))
                 self.plot(diag_type="histogram")
 
-            elif self.type == "w":
-                self.histogram, self.bins = numpy.histogram(self.values, weights=weights, bins=25, range=(0, 3500))
-                self.plot(diag_type="line")
-
             else:
-                raise TypeError("Undefined histogram types: %s" % self.type)
+                self.histogram, self.bins = numpy.histogram(self.values, weights=weights, bins=50, range=(0, 3500))
+                self.plot(diag_type="line")
 
         else:
             raise ValueError("Can't plot histogram with no values.")

@@ -63,7 +63,7 @@ class Counter(object):
         if len(self.values) != 0:
             print('Name: ' + str(self.name) + ', Mean: ' + str(self.get_mean()) + ', Variance: ' + str(self.get_var()))
         else:
-            print('List for creating report is empty. Please check.')
+            print("List for creating report is empty. Please check.")
 
 
 class TimeIndependentCounter(Counter):
@@ -91,20 +91,17 @@ class TimeIndependentCounter(Counter):
         """
         Return the mean value of the internal array.
         """
-        if len(self.values) <= 0:
-            raise RuntimeError("No values stored in the counter. Abort.")
-        else:
+        if len(self.values) > 0:
             return numpy.mean(self.values)
+        else:
+            return 0
 
     def get_var(self):
         """
         Return the variance of the internal array.
         Note, that we take the estimated variance, not the exact variance.
         """
-        if len(self.values) <= 0:
-            raise RuntimeError("No values stored in the counter. Abort.")
-        else:
-            return numpy.var(self.values, ddof=1)
+        return numpy.var(self.values, ddof=1)
 
     def get_stddev(self):
         """
@@ -137,14 +134,11 @@ class TimeDependentCounter(Counter):
         Adds new value to internal array.
         Duration from last to current value is considered.
         """
-
         dt = self.sim.sim_state.now - self.last_timestamp
         if dt < 0:
             print('Error in calculating time dependent statistics. Current time is smaller than last timestamp.')
             raise ValueError
-        # Second moment
         self.sum_power_two.append(value * value * dt)
-        # First moment
         self.values.append(value * dt)
         self.last_timestamp = self.sim.sim_state.now
 
@@ -189,6 +183,9 @@ class TimeIndependentCrosscorrelationCounter(TimeIndependentCounter):
         """
         super(TimeIndependentCrosscorrelationCounter, self).__init__(name)
         # TODO Task 4.1.1: Your code goes here
+        self.X = TimeIndependentCounter()
+        self.Y = TimeIndependentCounter()
+        self.XY = TimeIndependentCounter()
         pass
 
     def reset(self):
@@ -197,6 +194,9 @@ class TimeIndependentCrosscorrelationCounter(TimeIndependentCounter):
         """
         TimeIndependentCounter.reset(self)
         # TODO Task 4.1.1: Your code goes here
+        self.X = TimeIndependentCounter()
+        self.Y = TimeIndependentCounter()
+        self.XY = TimeIndependentCounter()
         pass
 
     def count(self, x, y):
@@ -204,6 +204,9 @@ class TimeIndependentCrosscorrelationCounter(TimeIndependentCounter):
         Count two values for the correlation between them. They are added to the two internal arrays.
         """
         # TODO Task 4.1.1: Your code goes here
+        self.X.count(x)
+        self.Y.count(y)
+        self.XY.count(x*y)
         pass
 
     def get_cov(self):
@@ -212,6 +215,7 @@ class TimeIndependentCrosscorrelationCounter(TimeIndependentCounter):
         :return: cross covariance
         """
         # TODO Task 4.1.1: Your code goes here
+        return self.XY.get_mean() - self.X.get_mean()*self.X.get_mean()
         pass
 
     def get_cor(self):
@@ -220,6 +224,7 @@ class TimeIndependentCrosscorrelationCounter(TimeIndependentCounter):
         :return: cross correlation
         """
         # TODO Task 4.1.1: Your code goes here
+        return self.get_cov()/((self.X.get_var()*self.X.get_var())**0.5)
         pass
 
     def report(self):
@@ -242,6 +247,10 @@ class TimeIndependentAutocorrelationCounter(TimeIndependentCounter):
         """
         super(TimeIndependentAutocorrelationCounter, self).__init__(name)
         # TODO Task 4.1.2: Your code goes here
+        self.X = TimeIndependentCounter()
+        self.Xshifted = TimeIndependentCounter()
+        self.XXshifted = TimeIndependentCounter()
+
         pass
 
     def reset(self):
@@ -250,6 +259,9 @@ class TimeIndependentAutocorrelationCounter(TimeIndependentCounter):
         """
         TimeIndependentCounter.reset(self)
         # TODO Task 4.1.2: Your code goes here
+        self.X = TimeIndependentCounter()
+        self.Xshifted = TimeIndependentCounter()
+        self.XXshifted = TimeIndependentCounter()
         pass
 
     def count(self, x):
@@ -257,6 +269,7 @@ class TimeIndependentAutocorrelationCounter(TimeIndependentCounter):
         Add new element x to counter.
         """
         # TODO Task 4.1.2: Your code goes here
+        self.X.count(x)
         pass
 
     def get_auto_cov(self, lag):
