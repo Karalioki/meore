@@ -281,7 +281,7 @@ class TimeIndependentAutocorrelationCounter(TimeIndependentCounter):
         """
         # TODO Task 4.1.2: Your code goes here
         self.shifted = self.X.values[:]
-        print(self.shifted)
+        self.XX = []
         for j in range(0, lag):
             temp = self.shifted[len(self.shifted) - 1]
             for i in range(len(self.shifted) - 1, 0, -1):
@@ -289,8 +289,9 @@ class TimeIndependentAutocorrelationCounter(TimeIndependentCounter):
             self.shifted[0] = temp
 
 
-        for i, j in zip(self.shifted, self.X.values):
-            self.XX.append(i * j)
+        for m, n in zip(self.shifted, self.X.values):
+            self.XX.append(m * n)
+
 
         result = numpy.mean(self.XX) - self.X.get_mean()*numpy.mean(self.shifted)
         return result
