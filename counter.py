@@ -224,7 +224,7 @@ class TimeIndependentCrosscorrelationCounter(TimeIndependentCounter):
         :return: cross correlation
         """
         # TODO Task 4.1.1: Your code goes here
-        return self.get_cov()/((self.X.get_var()*self.X.get_var())**0.5)
+        return self.get_cov()/math.sqrt(self.X.get_var()*self.X.get_var())
         pass
 
     def report(self):
@@ -282,14 +282,15 @@ class TimeIndependentAutocorrelationCounter(TimeIndependentCounter):
         # TODO Task 4.1.2: Your code goes here
         self.shifted = self.X.values
 
-        for j  in range(lag - 1):
+        for j in range(lag - 1):
             temp = self.shifted[len(self.shifted) - 1]
             for i in range(len(self.shifted), 0, -1):
                 self.shifted[i] = self.shifted[i - 1]
             self.shifted[0] = temp
 
-        for i, j in zip(self.shifted, self.values):
+        for i, j in zip(self.shifted, self.X.values):
             self.XX.append(i * j)
+        return numpy.mean(self.XX) - self.X.get_mean()*numpy.mean(self.shifted)
 
 
 
@@ -300,14 +301,14 @@ class TimeIndependentAutocorrelationCounter(TimeIndependentCounter):
         :return: auto correlation
         """
         # TODO Task 4.1.2: Your code goes here
-        pass
+        return self.get_auto_cov(lag)/math.sqrt(self.X.get_var()*numpy.var(self.shifted, ddof=1))
 
     def set_max_lag(self, max_lag):
         """
         Change maximum lag. Cycle length is set to max_lag + 1.
         """
         # TODO Task 4.1.2: Your code goes here
-        pass
+        self.max_lag = max_lag
 
     def report(self):
         """
