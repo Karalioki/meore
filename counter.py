@@ -294,6 +294,7 @@ class TimeIndependentAutocorrelationCounter(TimeIndependentCounter):
 
 
 
+
     def get_auto_cor(self, lag):
         """
         Calculate the auto correlation for a given lag.
