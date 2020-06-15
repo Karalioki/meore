@@ -1,5 +1,8 @@
 from counter import TimeIndependentAutocorrelationCounter
 from simulation import Simulation
+from packet import Packet
+import matplotlib.pyplot as plt
+import numpy as np
 """
 This file should be used to keep all necessary code that is used for the verification and simulation section in part 4
 of the programming assignment. It contains tasks 4.2.1, 4.3.1 and 4.3.2.
@@ -11,19 +14,19 @@ def task_4_2_1():
     Execute exercise 4.2.1, which is basically just a test for the auto correlation.
     """
     # TODO Task 4.2.1: Your code goes here
-    autocor = TimeIndependentAutocorrelationCounter(max_lag=5)
-    for i in range(5000):
-        autocor.count(1)
-        autocor.count(-1)
-    autocor.report()
-
-    autocor.reset()
-    for i in range(5000):
-        autocor.count(1)
-        autocor.count(1)
-        autocor.count(-1)
-    autocor.report()
-
+    # autocor = TimeIndependentAutocorrelationCounter(max_lag=5)
+    # for i in range(5000):
+    #     autocor.count(1)
+    #     autocor.count(-1)
+    # autocor.report()
+    #
+    # autocor.reset()
+    # for i in range(5000):
+    #     autocor.count(1)
+    #     autocor.count(1)
+    #     autocor.count(-1)
+    # autocor.report()
+    pass
 
 
 def task_4_3_1():
@@ -33,17 +36,18 @@ def task_4_3_1():
     SIM_TIME is set higher in order to avoid a large influence of startup effects
     """
     # TODO Task 4.3.1: Your code goes here
-    sim = Simulation()
-    sim.sim_param.S = 10000
-    sim.sim_param.SIM_TIME = 10000000
-    rho = [0.01, 0.5, 0.8, 0.95]
-    for i in rho:
-        sim.sim_param.RHO = i
-        sim.reset()
-        sim.do_simulation()
-        sim.counter_collection.report()
-
+    # sim = Simulation()
+    # sim.sim_param.S = 10000
+    # sim.sim_param.SIM_TIME = 10000000
+    # rho = [0.01, 0.5, 0.8, 0.95]
+    # for i in rho:
+    #     sim.sim_param.RHO = i
+    #     sim.reset()
+    #     sim.do_simulation()
+    #     sim.counter_collection.report()
     pass
+
+
 
 
 def task_4_3_2():
@@ -54,6 +58,19 @@ def task_4_3_2():
     The simulation parameters are the same as in task_4_3_1()
     """
     # TODO Task 4.3.2: Your code goes here
+    sim = Simulation()
+    sim.sim_param.S = 10000
+    sim.sim_param.SIM_TIME = 10000000
+    rho = [0.01, 0.5, 0.8, 0.95]
+    packet = Packet(sim)
+    sim.sim_param.RHO = 0.01
+    sim.reset()
+    sim.do_simulation()
+    x = np.packet.get_interarrival_time()
+    y = np.packet.get_service_time()
+    plt.plot(x, y, 'o', color='black')
+
+
     pass
 
 
