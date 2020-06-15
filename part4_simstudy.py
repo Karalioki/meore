@@ -2,7 +2,8 @@ from counter import TimeIndependentAutocorrelationCounter
 from simulation import Simulation
 from packet import Packet
 import matplotlib.pyplot as plt
-import numpy as np
+
+
 """
 This file should be used to keep all necessary code that is used for the verification and simulation section in part 4
 of the programming assignment. It contains tasks 4.2.1, 4.3.1 and 4.3.2.
@@ -36,15 +37,15 @@ def task_4_3_1():
     SIM_TIME is set higher in order to avoid a large influence of startup effects
     """
     # TODO Task 4.3.1: Your code goes here
-    # sim = Simulation()
-    # sim.sim_param.S = 10000
-    # sim.sim_param.SIM_TIME = 10000000
-    # rho = [0.01, 0.5, 0.8, 0.95]
-    # for i in rho:
-    #     sim.sim_param.RHO = i
-    #     sim.reset()
-    #     sim.do_simulation()
-    #     sim.counter_collection.report()
+    sim = Simulation()
+    sim.sim_param.S = 10000
+    sim.sim_param.SIM_TIME = 10000000
+    rho = [0.01, 0.5, 0.8, 0.95]
+    for i in rho:
+        sim.sim_param.RHO = i
+        sim.reset()
+        sim.do_simulation()
+        sim.counter_collection.report()
     pass
 
 
@@ -62,13 +63,26 @@ def task_4_3_2():
     sim.sim_param.S = 10000
     sim.sim_param.SIM_TIME = 10000000
     rho = [0.01, 0.5, 0.8, 0.95]
-    packet = Packet(sim)
-    sim.sim_param.RHO = 0.01
-    sim.reset()
-    sim.do_simulation()
-    x = np.packet.get_interarrival_time()
-    y = np.packet.get_service_time()
-    plt.plot(x, y, 'o', color='black')
+    # plt.subplots_adjust(hspace=0.6)
+    plt.figure(figsize=(12, 30))
+
+    plot_counter = 1
+    for i in range(len(rho)):
+        sim.reset()
+        iat_st = sim.counter_collection.cnt_iat_st
+        st_syst = sim.counter_collection.cnt_st_syst
+        sim.sim_param.RHO = rho[i]
+        sim.do_simulation()
+        plt.subplot(4,2,plot_counter)
+        plot_counter += 1
+        plt.scatter(iat_st.X.values, iat_st.Y.values)
+        plt.title("IAT VS Service Time RHO ="+ str(rho[i]))
+        plt.subplot(4, 2, plot_counter)
+        plot_counter +=1
+        plt.scatter(st_syst.X.values, st_syst.Y.values)
+        plt.title("Serving Time VS Syst Time RHO =" + str(rho[i]))
+
+    plt.show()
 
 
     pass
@@ -82,11 +96,39 @@ def task_4_3_3():
     Note, that for some seeds with rho=0.01 and N=100, the variance of the auto covariance is 0 and returns an error.
     """
     # TODO Task 4.3.3: Your code goes here
+    sim = Simulation()
+    sim.sim_param.S = 10000000
+    rho = [0.01, 0.5, 0.8, 0.95]
+    plt.figure(figsize=(16, 20))
+    for i in rho:
+        sim.reset()
+        sim.sim_param.RHO = i
+        sim.do_simulation_n_limit(100)
+        corelations = []
+        lags = range(1,21)
+        for lag in lags:
+            corelations.append(sim.counter_collection.acnt_wt.get_auto_cor(lag))
+
+        plt.subplot(2, 1, 1)
+        plt.plot(lags, corelations)
+    plt.legend(rho)
+    for i in rho:
+        sim.reset()
+        sim.sim_param.RHO = i
+        sim.do_simulation_n_limit(1000)
+        corelations = []
+        lags = range(1,21)
+        for lag in lags:
+            corelations.append(sim.counter_collection.acnt_wt.get_auto_cor(lag))
+        plt.subplot(2, 1, 2)
+        plt.plot(lags, corelations, label= str(i))
+    plt.legend(loc= "upper left")
+    plt.show()
     pass
 
 
 if __name__ == '__main__':
-    task_4_2_1()
-    task_4_3_1()
+    # task_4_2_1()
+    # task_4_3_1()
     task_4_3_2()
     task_4_3_3()

@@ -72,3 +72,32 @@ class Simulation(object):
         # gather results for sim_result object
         self.sim_result.gather_results()
         return self.sim_result
+    def do_simulation_n_limit(self, N):
+        # insert first and last event
+        self.event_chain.insert(CustomerArrival(self, 0))
+        self.event_chain.insert(SimulationTermination(self, self.sim_param.SIM_TIME))
+
+        # start simulation (run)
+        while not self.sim_state.stop:
+
+            # get next simevent from events
+            e = self.event_chain.remove_oldest_event()
+            if e:
+                # if event exists and timestamps are ok, process the event
+                if self.sim_state.now <= e.timestamp:
+                    self.sim_state.now = e.timestamp
+                    self.counter_collection.count_queue()
+                    e.process()
+                    if self.sim_state.num_packets >= N:
+                        self.sim_state.stop = True
+                else:
+                    print('NOW: ' + str(self.sim_state.now) + ', EVENT TIMESTAMP: ' + str(e.timestamp))
+                    raise RuntimeError("ERROR: TIMESTAMP OF EVENT IS SMALLER THAN CURRENT TIME.")
+
+            else:
+                print('Event chain is empty. Abort')
+                self.sim_state.stop = True
+
+        # gather results for sim_result object
+        self.sim_result.gather_results()
+        return self.sim_result
