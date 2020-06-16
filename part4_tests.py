@@ -36,6 +36,7 @@ class DESTest(unittest.TestCase):
         results_cov = [52.0, 40.0, 29.0, 19.0, 10.0]
         results_cor = [0.9998, 0.7691, 0.5576, 0.3653, 0.1923]
 
+
         for lag in range(5):
             self.assertAlmostEqual(tiacc.get_auto_cov(lag), results_cov[lag], delta=.05,
                                    msg="Error in TimeIndependentAutocorrelationCounter. Covariance calculation is wrong.")
