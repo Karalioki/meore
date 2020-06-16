@@ -280,13 +280,9 @@ class TimeIndependentAutocorrelationCounter(TimeIndependentCounter):
         :return: auto covariance
         """
         # TODO Task 4.1.2: Your code goes here
-        self.shifted = self.X.values[:]
-        self.XX = []
-        for j in range(0, lag):
-            temp = self.shifted[len(self.shifted) - 1]
-            for i in range(len(self.shifted) - 1, 0, -1):
-                self.shifted[i] = self.shifted[i - 1]
-            self.shifted[0] = temp
+        self.XX =[]
+        self.shifted = self.X.values[len(self.X.values)- lag:]
+        self.shifted.extend(self.X.values[:len(self.X.values)-lag])
 
 
         for m, n in zip(self.shifted, self.X.values):
