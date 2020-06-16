@@ -15,18 +15,19 @@ def task_4_2_1():
     Execute exercise 4.2.1, which is basically just a test for the auto correlation.
     """
     # TODO Task 4.2.1: Your code goes here
-    autocor = TimeIndependentAutocorrelationCounter(max_lag=5)
-    for i in range(5000):
-        autocor.count(1)
-        autocor.count(-1)
-    autocor.report()
-
-    autocor.reset()
-    for i in range(5000):
-        autocor.count(1)
-        autocor.count(1)
-        autocor.count(-1)
-    autocor.report()
+    # autocor = TimeIndependentAutocorrelationCounter(max_lag=5)
+    # for i in range(5000):
+    #     autocor.count(1)
+    #     autocor.count(-1)
+    # autocor.report()
+    #
+    # autocor.reset()
+    # for i in range(5000):
+    #     autocor.count(1)
+    #     autocor.count(1)
+    #     autocor.count(-1)
+    # autocor.report()
+    pass
 
 
 def task_4_3_1():
@@ -96,42 +97,40 @@ def task_4_3_3():
     """
     # TODO Task 4.3.3: Your code goes here
     sim = Simulation()
-    sim.sim_param.S = 10000
+    sim.sim_param.S = 10000000
     rho = [0.01, 0.5, 0.8, 0.95]
     plt.figure(figsize=(8, 15))
     for i in rho:
         sim.reset()
         sim.sim_param.RHO = i
-        sim.do_simulation_n_limit(10000)
+        sim.do_simulation_n_limit(100)
         correlations = []
         lags = range(1, 21)
-        # print(i)
         for lag in lags:
             correlations.append(sim.counter_collection.acnt_wt.get_auto_cor(lag))
-        # print(correlations)
+        print(correlations)
+
         plt.subplot(2, 1, 1)
         plt.plot(lags, correlations, '-o', label=str(i))
-
     plt.legend(loc='upper right')
     plt.legend(rho)
-
     for i in rho:
         sim.reset()
         sim.sim_param.RHO = i
-        sim.do_simulation_n_limit(10000)
+        sim.do_simulation_n_limit(1000)
         correlations = []
         lags = range(1, 21)
         for lag in lags:
             correlations.append(sim.counter_collection.acnt_wt.get_auto_cor(lag))
         plt.subplot(2, 1, 2)
         plt.plot(lags, correlations, '-o', label=str(i))
-    plt.legend(loc="upper right")
+    plt.legend(loc= "upper right")
     plt.show()
     pass
 
 
 if __name__ == '__main__':
-    task_4_2_1()
-    task_4_3_1()
-    task_4_3_2()
+    # task_4_2_1()
+    # task_4_3_1()
+    # task_4_3_2()
     task_4_3_3()
