@@ -110,21 +110,21 @@ def task_4_3_3():
             correlations.append(sim.counter_collection.acnt_wt.get_auto_cor(lag))
         print(correlations)
 
-        plt.subplot(2, 1, 1)
+        # plt.subplot(2, 1, 1)
         plt.plot(lags, correlations, '-o', label=str(i))
     plt.legend(loc='upper right')
-    plt.legend(rho)
-    for i in rho:
-        sim.reset()
-        sim.sim_param.RHO = i
-        sim.do_simulation_n_limit(1000)
-        correlations = []
-        lags = range(1, 21)
-        for lag in lags:
-            correlations.append(sim.counter_collection.acnt_wt.get_auto_cor(lag))
-        plt.subplot(2, 1, 2)
-        plt.plot(lags, correlations, '-o', label=str(i))
-    plt.legend(loc= "upper right")
+    # plt.legend(rho)
+    # for i in rho:
+    #     sim.reset()
+    #     sim.sim_param.RHO = i
+    #     sim.do_simulation_n_limit(1000)
+    #     correlations = []
+    #     lags = range(1, 21)
+    #     for lag in lags:
+    #         correlations.append(sim.counter_collection.acnt_wt.get_auto_cor(lag))
+    #     plt.subplot(2, 1, 2)
+    #     plt.plot(lags, correlations, '-o', label=str(i))
+    # plt.legend(loc= "upper right")
     plt.show()
     pass
 
