@@ -99,30 +99,31 @@ def task_4_3_3():
     sim = Simulation()
     sim.sim_param.S = 10000000
     rho = [0.01, 0.5, 0.8, 0.95]
-    plt.figure(figsize=(16, 20))
+    plt.figure(figsize=(8, 15))
     for i in rho:
         sim.reset()
         sim.sim_param.RHO = i
         sim.do_simulation_n_limit(100)
-        corelations = []
-        lags = range(1,21)
+        correlations = []
+        lags = range(1, 21)
         for lag in lags:
-            corelations.append(sim.counter_collection.acnt_wt.get_auto_cor(lag))
+            correlations.append(sim.counter_collection.acnt_wt.get_auto_cor(lag))
 
         plt.subplot(2, 1, 1)
-        plt.plot(lags, corelations)
-    plt.legend(rho)
-    for i in rho:
-        sim.reset()
-        sim.sim_param.RHO = i
-        sim.do_simulation_n_limit(1000)
-        corelations = []
-        lags = range(1,21)
-        for lag in lags:
-            corelations.append(sim.counter_collection.acnt_wt.get_auto_cor(lag))
-        plt.subplot(2, 1, 2)
-        plt.plot(lags, corelations, label= str(i))
-    plt.legend(loc= "upper left")
+        plt.plot(lags, correlations, '-o', label=str(i))
+    plt.legend(loc='upper right')
+    # plt.legend(rho)
+    # for i in rho:
+    #     sim.reset()
+    #     sim.sim_param.RHO = i
+    #     sim.do_simulation_n_limit(1000)
+    #     correlations = []
+    #     lags = range(1, 21)
+    #     for lag in lags:
+    #         correlations.append(sim.counter_collection.acnt_wt.get_auto_cor(lag))
+    #     plt.subplot(2, 1, 2)
+    #     plt.plot(lags, correlations, '-o', label=str(i))
+    # plt.legend(loc= "upper right")
     plt.show()
     pass
 
