@@ -15,18 +15,31 @@ def task_5_2_1():
     """
     results = [None, None, None, None]
     # TODO Task 5.2.1: Your code goes here
+    sim = Simulation()
+    blocking_probability = TimeIndependentCounter()
+    sim.sim_param.RHO = 0.9
+    sim.sim_param.S = 4
+    epsilon = 0.0015
+    runs = 0
+    i = 0
+    for t in [100000, 1000000]:
+        sim.sim_param.SIM_TIME = t
+        for alpha in [0.1, 0.05]:
+            blocking_probability.reset()
+            runs = 0
+            while blocking_probability.report_confidence_interval(alpha) > 2*epsilon:
+                sim.reset()
+                sim.do_simulation()
+                blocking_probability.count(sim.sim_result.blocking_probability)
+                runs += 1
+            results[i] = runs
+            i += 1
 
     # print and return results
-    print(
-        'SIM TIME:  100s; ALPHA: 10%; NUMBER OF RUNS: ' + str(results[0]) + '; TOTAL SIMULATION TIME (SECONDS): ' + str(
-            results[0] * 100))
-    print(
-        'SIM TIME:  100s; ALPHA:  5%; NUMBER OF RUNS: ' + str(results[1]) + '; TOTAL SIMULATION TIME (SECONDS): ' + str(
-            results[1] * 100))
-    print('SIM TIME: 1000s; ALPHA: 10%; NUMBER OF RUNS:  ' + str(
-        results[2]) + '; TOTAL SIMULATION TIME (SECONDS): ' + str(results[2] * 1000))
-    print('SIM TIME: 1000s; ALPHA:  5%; NUMBER OF RUNS:  ' + str(
-        results[3]) + '; TOTAL SIMULATION TIME (SECONDS): ' + str(results[3] * 1000))
+    print('SIM TIME:  100s; ALPHA: 10%; NUMBER OF RUNS: ' + str(results[0]) + '; TOTAL SIMULATION TIME (SECONDS): ' + str(results[0] * 100))
+    print('SIM TIME:  100s; ALPHA:  5%; NUMBER OF RUNS: ' + str(results[1]) + '; TOTAL SIMULATION TIME (SECONDS): ' + str(results[1] * 100))
+    print('SIM TIME: 1000s; ALPHA: 10%; NUMBER OF RUNS:  ' + str(results[2]) + '; TOTAL SIMULATION TIME (SECONDS): ' + str(results[2] * 1000))
+    print('SIM TIME: 1000s; ALPHA:  5%; NUMBER OF RUNS:  ' + str(results[3]) + '; TOTAL SIMULATION TIME (SECONDS): ' + str(results[3] * 1000))
     return results
 
 
@@ -80,5 +93,5 @@ def plot_confidence(sim, x, y_min, y_max, calc_mean, act_mean, ylabel):
 
 if __name__ == '__main__':
     task_5_2_1()
-    task_5_2_2()
-    task_5_2_4()
+    # task_5_2_2()
+    # task_5_2_4()
