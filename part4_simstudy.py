@@ -1,8 +1,6 @@
 from counter import TimeIndependentAutocorrelationCounter
 from simulation import Simulation
-from packet import Packet
-import matplotlib.pyplot as plt
-
+from matplotlib import pyplot
 
 """
 This file should be used to keep all necessary code that is used for the verification and simulation section in part 4
@@ -14,20 +12,35 @@ def task_4_2_1():
     """
     Execute exercise 4.2.1, which is basically just a test for the auto correlation.
     """
-    # TODO Task 4.2.1: Your code goes here
-    autocor = TimeIndependentAutocorrelationCounter(max_lag=5)
-    for i in range(5000):
-        autocor.count(1)
-        autocor.count(-1)
-    autocor.report()
+    autocorrelation_test_counter = TimeIndependentAutocorrelationCounter("test sequence", max_lag=1)
 
-    autocor.reset()
-    for i in range(5000):
-        autocor.count(1)
-        autocor.count(1)
-        autocor.count(-1)
-    autocor.report()
+    print('First test series:')
 
+    # Test first series:
+    for _ in range(5000):
+        autocorrelation_test_counter.count(1)
+        autocorrelation_test_counter.count(-1)
+
+    print('Mean = ' + str(autocorrelation_test_counter.get_mean()))
+    print('Var = ' + str(autocorrelation_test_counter.get_var()))
+    autocorrelation_test_counter.report()
+
+    print('____________________________________________')
+    print('Second test series:')
+    autocorrelation_test_counter.reset()
+    autocorrelation_test_counter.set_max_lag(2)
+
+    # Test second series
+    for _ in range(5000):
+        autocorrelation_test_counter.count(1)
+        autocorrelation_test_counter.count(1)
+        autocorrelation_test_counter.count(-1)
+
+    # print results
+    print('Mean = ' + str(autocorrelation_test_counter.get_mean()))
+    print('Var = ' + str(autocorrelation_test_counter.get_var()))
+
+    autocorrelation_test_counter.report()
 
 
 def task_4_3_1():
@@ -36,19 +49,17 @@ def task_4_3_1():
     After each simulation, print report results.
     SIM_TIME is set higher in order to avoid a large influence of startup effects
     """
-    # TODO Task 4.3.1: Your code goes here
     sim = Simulation()
-    sim.sim_param.S = 10000
     sim.sim_param.SIM_TIME = 10000000
-    rho = [0.01, 0.5, 0.8, 0.95]
-    for i in rho:
-        sim.sim_param.RHO = i
+    sim.sim_param.S = 10000
+    for rho in [.01, .5, .8, .95]:
+        sim.sim_param.RHO = rho
         sim.reset()
+        print('_____________________________________________________')
+        print('NEW RUN with rho=' + str(sim.sim_param.RHO))
+        print('_____________________________________________________\n')
         sim.do_simulation()
         sim.counter_collection.report()
-    pass
-
-
 
 
 def task_4_3_2():
@@ -58,81 +69,103 @@ def task_4_3_2():
     For every rho, two scatter plots are needed.
     The simulation parameters are the same as in task_4_3_1()
     """
-    # TODO Task 4.3.2: Your code goes here
     sim = Simulation()
-    sim.sim_param.S = 10000
     sim.sim_param.SIM_TIME = 10000000
-    rho = [0.01, 0.5, 0.8, 0.95]
-    # plt.subplots_adjust(hspace=0.6)
-    plt.figure(figsize=(12, 30))
-
-    plot_counter = 1
-    for i in range(len(rho)):
+    sim.sim_param.S = 10000
+    plot_id = 1
+    for rho in [.01, .5, .8, .95]:
+        sim.sim_param.RHO = rho
         sim.reset()
-        iat_st = sim.counter_collection.cnt_iat_st
-        st_syst = sim.counter_collection.cnt_st_syst
-        sim.sim_param.RHO = rho[i]
+        print('NEW RUN with rho=' + str(sim.sim_param.RHO))
         sim.do_simulation()
-        plt.subplot(4,2,plot_counter)
-        plot_counter += 1
-        plt.scatter(iat_st.X.values, iat_st.Y.values)
-        plt.title("IAT VS Service Time RHO ="+ str(rho[i]))
-        plt.subplot(4, 2, plot_counter)
-        plot_counter +=1
-        plt.scatter(st_syst.X.values, st_syst.Y.values)
-        plt.title("Serving Time VS Syst Time RHO =" + str(rho[i]))
 
-    plt.show()
+        iat = sim.counter_collection.cnt_iat_st.x.values
+        service_time = sim.counter_collection.cnt_iat_st.y.values
+        system_time = sim.counter_collection.cnt_iat_syst.y.values
 
+        # Plot iat vs. service time
+        pyplot.subplot("42%d" % plot_id)
+        plot_id += 1
+        pyplot.title(r"$\rho$=" + str(rho))
 
-    pass
+        pyplot.xlabel("inter-arrival time")
+        pyplot.ylabel("service time")
+        pyplot.scatter(iat, service_time, marker="+", color="red")
+
+        # Plot service time vs. system time
+        pyplot.subplot("42%d" % plot_id)
+        plot_id += 1
+        pyplot.title(r"$\rho$=" + str(rho))
+
+        pyplot.xlabel("inter-arrival time")
+        pyplot.ylabel("service time")
+        pyplot.scatter(service_time, system_time, marker="+")
+    pyplot.show()
 
 
 def task_4_3_3():
     """
     Exercise to plot auto correlation depending on lags. Run simulation until 10000 (or 100) packets are served.
-    For the different rho values, simulation is run and the waiting time is auto correlated.
+    For the different rho values, simulation is run and the blocking probability is auto correlated.
     Results are plotted for each N value in a different diagram.
-    Note, that for some seeds with rho=0.01 and N=100, the variance of the auto covariance is 0 and returns an error.
+    Note, that for some seeds with rho=0.DES and N=100, the variance of the auto covariance is 0 and returns an error.
     """
-    # TODO Task 4.3.3: Your code goes here
     sim = Simulation()
-    sim.sim_param.S = 10000000
-    rho = [0.01, 0.5, 0.8, 0.95]
-    plt.figure(figsize=(8, 15))
-    for i in rho:
-        sim.reset()
-        sim.sim_param.RHO = i
-        sim.do_simulation_n_limit(100)
-        correlations = []
-        lags = range(1, 21)
-        for lag in lags:
-            correlations.append(sim.counter_collection.acnt_wt.get_auto_cor(lag))
 
-        plt.subplot(2, 1, 1)
-        plt.plot(lags, correlations, '-o', label=str(i))
-    plt.title("N = 100")
-    plt.legend(loc='upper right')
-    plt.legend(rho)
-    for i in rho:
-        sim.reset()
-        sim.sim_param.RHO = i
-        sim.do_simulation_n_limit(1000)
-        correlations = []
-        lags = range(1, 21)
-        for lag in lags:
-            correlations.append(sim.counter_collection.acnt_wt.get_auto_cor(lag))
+    sim.sim_param.S = 10000
 
-        plt.subplot(2, 1, 2)
-        plt.plot(lags, correlations, '-o', label=str(i))
-    plt.title("N = 10000")
-    plt.legend(loc="upper right")
-    plt.show()
-    pass
+    n = 100
+    for rho in [.01, .5, .8, .95]:
+        sim.sim_param.RHO = rho
+        sim.reset()
+        sim.do_simulation_n_limit(n)
+
+        lag = []
+        cor = []
+
+        for i in range(20):
+            c = sim.counter_collection.acnt_wt.get_auto_cor(i + 1)
+            lag.append(i + 1)
+            cor.append(c)
+
+        pyplot.subplot(121)
+        pyplot.plot(lag, cor, "-o", label="rho = " + str(rho))
+
+    pyplot.subplot(121)
+    pyplot.xlabel("lag")
+    pyplot.ylabel("autocorrelation")
+    pyplot.legend(loc='upper right')
+    pyplot.title("N=" + str(n))
+
+    n = 10000
+    for rho in [.01, .5, .8, .95]:
+        sim.sim_param.RHO = rho
+        sim.sim_param.SEED_IAT = 5
+        sim.sim_param.SEED_ST = 0
+        sim.reset()
+        sim.do_simulation_n_limit(n)
+
+        lag = []
+        cor = []
+
+        for i in range(20):
+            c = sim.counter_collection.acnt_wt.get_auto_cor(i + 1)
+            lag.append(i + 1)
+            cor.append(c)
+
+        pyplot.subplot(122)
+        pyplot.plot(lag, cor, "-o", label="rho = " + str(rho))
+
+    pyplot.subplot(122)
+    pyplot.xlabel("lag")
+    pyplot.ylabel("autocorrelation")
+    pyplot.legend(loc='upper right')
+    pyplot.title("N=" + str(n))
+    pyplot.show()
 
 
 if __name__ == '__main__':
     task_4_2_1()
-    task_4_3_1()
-    task_4_3_2()
-    task_4_3_3()
+    # task_4_3_1()
+    # task_4_3_2()
+    # task_4_3_3()

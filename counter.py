@@ -1,4 +1,6 @@
 import math
+from typing import Union
+
 import numpy
 import scipy
 import scipy.stats
@@ -109,6 +111,45 @@ class TimeIndependentCounter(Counter):
         """
         return numpy.std(self.values, ddof=1)
 
+    def report_confidence_interval(self, alpha=0.05, print_report=True):
+        n = len(self.values)
+        var = self.get_var()
+        t = scipy.stats.t.ppf(1 - (alpha / 2), n - 1)
+        return t * (math.sqrt(var / n))
+        pass
+
+    def is_in_confidence_interval(self, x, alpha=0.05, print_report=True):
+        mean = self.get_mean()
+        low = mean - self.report_confidence_interval(alpha)
+        upper = mean + self.report_confidence_interval(alpha)
+        if low <= x <= upper:
+            return True
+        else:
+            return False
+
+    def report_bootstrap_confidence_interval(self, alpha=0.05, resample_size=5000):
+        theta_static = self.get_mean()
+        bootstrap_difference = []
+        for i in range(resample_size):
+            resample_data = numpy.random.choice(self.values, len(self.values))
+            theta_resample = numpy.mean(resample_data)
+            bootstrap_difference.append(theta_resample - theta_static)
+
+        bootstrap_difference = numpy.sort(bootstrap_difference)
+        quantile_low = numpy.quantile(bootstrap_difference, 1 - 0.5 * alpha)
+        quantile_upper = numpy.quantile(bootstrap_difference, 0.5 * alpha)
+        low_bound = theta_static - quantile_low
+        upper_bound = theta_static - quantile_upper
+        return low_bound, upper_bound
+
+    def is_in_bootstrap_confidence_interval(self, x, alpha=0.05, resample_size=5000):
+        (low, upper) = self.report_bootstrap_confidence_interval(alpha, resample_size)
+
+        if low <= x <= upper:
+            return True
+        else:
+            return False
+
 
 class TimeDependentCounter(Counter):
     """
@@ -182,50 +223,45 @@ class TimeIndependentCrosscorrelationCounter(TimeIndependentCounter):
         :param name: is a string for better distinction between counters.
         """
         super(TimeIndependentCrosscorrelationCounter, self).__init__(name)
-        # TODO Task 4.1.1: Your code goes here
-        self.X = TimeIndependentCounter()
-        self.Y = TimeIndependentCounter()
-        self.XY = TimeIndependentCounter()
-        pass
+        self.x = TimeIndependentCounter()
+        self.y = TimeIndependentCounter()
+        self.xy = TimeIndependentCounter()
+        self.reset()
 
     def reset(self):
         """
         Reset the TICCC to its initial state.
         """
         TimeIndependentCounter.reset(self)
-        # TODO Task 4.1.1: Your code goes here
-        self.X = TimeIndependentCounter()
-        self.Y = TimeIndependentCounter()
-        self.XY = TimeIndependentCounter()
-        pass
+        self.x.reset()
+        self.y.reset()
+        self.xy.reset()
 
     def count(self, x, y):
         """
         Count two values for the correlation between them. They are added to the two internal arrays.
         """
-        # TODO Task 4.1.1: Your code goes here
-        self.X.count(x)
-        self.Y.count(y)
-        self.XY.count(x*y)
-        pass
+        self.x.count(x)
+        self.y.count(y)
+        self.xy.count(x * y)
 
     def get_cov(self):
         """
         Calculate the covariance between the two internal arrays x and y.
-        :return: cross covariance
-        """
-        # TODO Task 4.1.1: Your code goes here
-        return self.XY.get_mean() - self.X.get_mean()*self.Y.get_mean()
 
+        Simple calculation with numpy:
+        cov = numpy.cov(self.x.values, self.y.values, ddof=0)[0, 1]
+        """
+        return self.xy.get_mean() - self.x.get_mean() * self.y.get_mean()
 
     def get_cor(self):
         """
-        Calculate the correlation between the two internal arrays x and y.
-        :return: cross correlation
+        Calculate the correlation coefficient between the two internal arrays x and y.
+
+        Simple calculation with numpy:
+        cor = numpy.corrcoef(self.x.values, self.y.values, ddof=0)[0, 1]
         """
-        # TODO Task 4.1.1: Your code goes here
-        return self.get_cov()/math.sqrt(self.X.get_var()*self.Y.get_var())
-        pass
+        return self.get_cov() / math.sqrt(self.x.get_var() * self.y.get_var())
 
     def report(self):
         """
@@ -246,73 +282,47 @@ class TimeIndependentAutocorrelationCounter(TimeIndependentCounter):
         :param max_lag: maximum available lag (defaults to 10)
         """
         super(TimeIndependentAutocorrelationCounter, self).__init__(name)
-        # TODO Task 4.1.2: Your code goes here
-        self.X = TimeIndependentCounter()
         self.max_lag = max_lag
-        self.shifted = []
-        self.XX = []
-
-
-
-
-    def reset(self):
-        """
-        Reset the counter to its original state.
-        """
-        TimeIndependentCounter.reset(self)
-        # TODO Task 4.1.2: Your code goes here
-        self.X = TimeIndependentCounter()
-        self.shifted = []
-        self.XX = []
-
-
-    def count(self, x):
-        """
-        Add new element x to counter.
-        """
-        # TODO Task 4.1.2: Your code goes here
-        self.X.count(x)
-
+        self.reset()
 
     def get_auto_cov(self, lag):
         """
-        Calculal te the auto covariance for a given lag.
+        Calculate the auto covariance for a given lag.
         :return: auto covariance
         """
-        # TODO Task 4.1.2: Your code goes here
-        self.shifted = self.X.values[:]
-        self.XX = []
-        for j in range(0, lag):
-            temp = self.shifted[len(self.shifted) - 1]
-            for i in range(len(self.shifted) - 1, 0, -1):
-                self.shifted[i] = self.shifted[i - 1]
-            self.shifted[0] = temp
+        if lag <= self.max_lag:
+            x = self.values
+            y = self.values[-lag:] + self.values[:-1 * lag]
+            xy = []
 
+            for i in range(len(x)):
+                xy.append(x[i] * y[i])
 
-        for m, n in zip(self.shifted, self.X.values):
-            self.XX.append(m * n)
+            return numpy.mean(xy) - numpy.mean(x) * numpy.mean(y)
 
-
-        result = numpy.mean(self.XX) - self.X.get_mean()*numpy.mean(self.shifted)
-        return result
-
-
-
+        else:
+            raise RuntimeError("lag larger than max_lag, please correct!")
 
     def get_auto_cor(self, lag):
         """
         Calculate the auto correlation for a given lag.
-        :return: auto correlation
+        :return: auto correlation coefficient
         """
-        # TODO Task 4.1.2: Your code goes here
-        return self.get_auto_cov(lag)/math.sqrt(self.X.get_var()*numpy.var(self.shifted, ddof=1))
+        if lag <= self.max_lag:
+            var = self.get_var()
+            if var != 0:
+                return self.get_auto_cov(lag) / var
+            else:
+                return 0.0
+        else:
+            raise RuntimeError("lag larger than max_lag, please correct!")
 
     def set_max_lag(self, max_lag):
         """
         Change maximum lag. Cycle length is set to max_lag + 1.
         """
-        # TODO Task 4.1.2: Your code goes here
         self.max_lag = max_lag
+        self.reset()
 
     def report(self):
         """

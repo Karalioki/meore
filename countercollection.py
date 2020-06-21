@@ -21,16 +21,16 @@ class CounterCollection(object):
         self.sim = sim
 
         # waiting time
-        self.cnt_wt = TimeIndependentCounter()
+        self.cnt_wt = TimeIndependentCounter(name="waiting time")
         self.hist_wt = TimeIndependentHistogram(self.sim, "w")
         self.acnt_wt = TimeIndependentAutocorrelationCounter("waiting time with lags 1 to 20", max_lag=20)
 
         # queue length
-        self.cnt_ql = TimeDependentCounter(self.sim)
+        self.cnt_ql = TimeDependentCounter(self.sim, name="queue length")
         self.hist_ql = TimeDependentHistogram(self.sim, "q")
 
         # system utilization
-        self.cnt_sys_util = TimeDependentCounter(self.sim)
+        self.cnt_sys_util = TimeDependentCounter(self.sim, name="system utilization")
 
         # blocking probability
         self.cnt_bp = TimeIndependentCounter("bp")

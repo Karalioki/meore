@@ -36,13 +36,13 @@ class RNG(object):
         """
         Return a new sample of the IAT RNS
         """
-        return self.iat_rns.next()
+        return self.iat_rns.next()*1000
     
     def get_st(self):
         """
         Return a new sample of the ST RNS
         """
-        return self.st_rns.next()
+        return self.st_rns.next()*1000
 
 
 class RNS(object):
