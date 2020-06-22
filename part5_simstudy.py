@@ -77,6 +77,7 @@ def task_5_2_2():
 
             results[i] = sim.sim_state.now
             i += 1
+            blocking_probability.report_confidence_interval(alpha)
 
     # print and return results
     print('BATCH SIZE:  100; ALPHA: 10%; TOTAL SIMULATION TIME (SECONDS): ' + str(results[0] / 1000))

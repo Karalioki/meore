@@ -115,6 +115,7 @@ class TimeIndependentCounter(Counter):
         n = len(self.values)
         var = self.get_var()
         t = scipy.stats.t.ppf(1 - (alpha / 2), n - 1)
+        print("confidence interval:"+str(self.get_mean()-t * (math.sqrt(var / n)))+str(self.get_mean()+t * (math.sqrt(var / n))))
         return t * (math.sqrt(var / n))
         pass
 
