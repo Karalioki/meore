@@ -64,9 +64,9 @@ def task_5_2_2():
         for alpha in [0.1, 0.05]:
             blocking_probability.reset()
             sim.reset()
-            while len(blocking_probability.values) <= len(results) or blocking_probability.report_confidence_interval(alpha) > 2*epsilon:
+            while len(blocking_probability.values) <= len(results) or blocking_probability.report_confidence_interval(alpha) > epsilon:
                 sim.do_simulation_n_limit(N)
-                blocking_probability.count()
+                blocking_probability.count(sim.sim_result.blocking_probability)
 
             results[i] = sim.sim_state.now
             i += 1
@@ -108,6 +108,6 @@ def plot_confidence(sim, x, y_min, y_max, calc_mean, act_mean, ylabel):
 
 
 if __name__ == '__main__':
-    task_5_2_1()
+    # task_5_2_1()
     task_5_2_2()
     # task_5_2_4()
