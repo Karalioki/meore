@@ -67,8 +67,8 @@ def task_5_2_2():
             blocking_probability.reset()
             sim.reset()
             while len(blocking_probability.values) <= len(results) or blocking_probability.report_confidence_interval(alpha) > epsilon:
-                r = sim.do_simulation_n_limit(N, new_batch=(n != dn))
-                blocking_probability.count(r.blocking_probability)
+                sim.do_simulation_n_limit(N, new_batch=(n != dn))
+                blocking_probability.count(sim.sim_result.blocking_probability)
                 sim.counter_collection.reset()
                 n += dn
                 sim.sim_state.num_blocked_packets = 0
