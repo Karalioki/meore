@@ -66,7 +66,7 @@ def task_5_2_2():
             n = dn
             blocking_probability.reset()
             sim.reset()
-            while len(blocking_probability.values) <= len(results) or blocking_probability.report_confidence_interval(alpha) > epsilon:
+            while len(blocking_probability.values) <= len(results) or blocking_probability.report_confidence_interval(alpha, print_report = False) > epsilon:
                 sim.do_simulation_n_limit(N, new_batch=(n != dn))
                 blocking_probability.count(sim.sim_result.blocking_probability)
                 sim.counter_collection.reset()
@@ -77,7 +77,7 @@ def task_5_2_2():
 
             results[i] = sim.sim_state.now
             i += 1
-            blocking_probability.report_confidence_interval(alpha)
+            blocking_probability.report_confidence_interval(alpha, print_report = True)
 
     # print and return results
     print('BATCH SIZE:  100; ALPHA: 10%; TOTAL SIMULATION TIME (SECONDS): ' + str(results[0] / 1000))
