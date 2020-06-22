@@ -27,7 +27,7 @@ def task_5_2_1():
         for alpha in [0.1, 0.05]:
             blocking_probability.reset()
             runs = 0
-            while blocking_probability.report_confidence_interval(alpha) > 2*epsilon:
+            while len(blocking_probability.values) <= len(results) or blocking_probability.report_confidence_interval(alpha) > epsilon:
                 sim.reset()
                 sim.do_simulation()
                 blocking_probability.count(sim.sim_result.blocking_probability)
@@ -54,6 +54,22 @@ def task_5_2_2():
     """
     results = [None, None, None, None]
     # TODO Task 5.2.2: Your code goes here
+    sim = Simulation()
+    blocking_probability = TimeIndependentCounter()
+    sim.sim_param.RHO = 0.9
+    sim.sim_param.S = 4
+    epsilon = 0.0015
+    i = 0
+    for N in [100, 1000]:
+        for alpha in [0.1, 0.05]:
+            blocking_probability.reset()
+            sim.reset()
+            while blocking_probability.report_confidence_interval(alpha) > 2*epsilon:
+                sim.do_simulation_n_limit(N)
+                blocking_probability.count()
+
+            results[i] = sim.sim_state.now
+            i+=1
 
     # print and return results
     print('BATCH SIZE:  100; ALPHA: 10%; TOTAL SIMULATION TIME (SECONDS): ' + str(results[0] / 1000))
