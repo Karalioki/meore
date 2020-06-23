@@ -95,19 +95,28 @@ def task_5_2_4():
     """
     # TODO Task 5.2.4: Your code goes here
     sim = Simulation()
-    utilization = TimeIndependentCounter()
     for rho in [0.5, 0.9]:
         sim.sim_param.RHO = rho
         sim.reset()
         for alpha in [0.1, 0.05]:
             for t in [100000, 1000000]:
+                utilization = TimeIndependentCounter()
+                mean = []
+                x = []
+                y = []
                 sim.sim_param.SIM_TIME = t
-                for repeat in range(100):
+                for repeat in range(1, 101):
                     utilization.reset()
                     for r in range(30):
                         sim.reset()
                         sim.do_simulation()
                         utilization.count(sim.sim_result.system_utilization)
+                    ci = utilization.report_confidence_interval(alpha, print_report= False)
+                    mean.append(utilization.get_mean())
+                    x.append(repeat)
+                    y.append((utilization.get_mean() - ci, utilization.get_mean() + ci))
+                numpy.mean(mean)
+
 
 
 
