@@ -1,6 +1,7 @@
 from counter import TimeIndependentCounter
 from simulation import Simulation
 from matplotlib import pyplot
+import numpy
 
 """
 This file should be used to keep all necessary code that is used for the simulation section in part 5
@@ -95,6 +96,8 @@ def task_5_2_4():
     """
     # TODO Task 5.2.4: Your code goes here
     sim = Simulation()
+    sim.sim_param.S = 100000
+    i = 1
     for rho in [0.5, 0.9]:
         sim.sim_param.RHO = rho
         sim.reset()
@@ -115,7 +118,12 @@ def task_5_2_4():
                     mean.append(utilization.get_mean())
                     x.append(repeat)
                     y.append((utilization.get_mean() - ci, utilization.get_mean() + ci))
-                numpy.mean(mean)
+                calc_mean = numpy.mean(mean)
+                act_mean = sim.sim_param.RHO
+                pyplot.subplot(4, 2, i)
+                plot_confidence(sim, x, y() )
+
+
 
 
 
