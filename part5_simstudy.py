@@ -120,11 +120,14 @@ def task_5_2_4():
                     y.append((utilization.get_mean() - ci, utilization.get_mean() + ci))
                 calc_mean = numpy.mean(mean)
                 act_mean = sim.sim_param.RHO
-                pyplot.subplot(4, 2, i)
+                pyplot.subplot(2, 2, i)
                 plot_confidence(sim, x, [y_min[0] for y_min in y], [y_max[1] for y_max in y],calc_mean, act_mean, "rame", alpha)
                 i+=1
+                if i > 4:
+                    pyplot.show()
+                    return
 
-    pyplot.show()
+    
 
 
 
