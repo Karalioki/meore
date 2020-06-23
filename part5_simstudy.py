@@ -140,6 +140,6 @@ def plot_confidence(sim, x, y_min, y_max, calc_mean, act_mean, ylabel, alpha):
 
 
 if __name__ == '__main__':
-    task_5_2_1()
+    #task_5_2_1()
     # task_5_2_2()
-    # task_5_2_4()
+    task_5_2_4()
