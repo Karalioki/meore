@@ -27,7 +27,7 @@ def task_5_2_1():
         for alpha in [0.1, 0.05]:
             blocking_probability.reset()
             runs = 0
-            while len(blocking_probability.values) <= len(results) or blocking_probability.report_confidence_interval(alpha) > epsilon:
+            while len(blocking_probability.values) <= len(results) or blocking_probability.report_confidence_interval(alpha, print_report = False) > epsilon:
                 sim.reset()
                 sim.do_simulation()
                 blocking_probability.count(sim.sim_result.blocking_probability)
@@ -94,10 +94,26 @@ def task_5_2_4():
     samples. Due to the different configurations, we receive eight plots in two figures.
     """
     # TODO Task 5.2.4: Your code goes here
-    pass
+    sim = Simulation()
+    utilization = TimeIndependentCounter()
+    for rho in [0.5, 0.9]:
+        sim.sim_param.RHO = rho
+        sim.reset()
+        for alpha in [0.1, 0.05]:
+            for t in [100000, 1000000]:
+                sim.sim_param.SIM_TIME = t
+                for repeat in range(100):
+                    utilization.reset()
+                    for r in range(30):
+                        sim.reset()
+                        sim.do_simulation()
+                        utilization.count(sim.sim_result.system_utilization)
 
 
-def plot_confidence(sim, x, y_min, y_max, calc_mean, act_mean, ylabel):
+
+
+
+def plot_confidence(sim, x, y_min, y_max, calc_mean, act_mean, ylabel, alpha):
     """
     Plot confidence levels in batches. Inputs are given as follows:
     :param sim: simulation, the measurement object belongs to.
@@ -113,9 +129,17 @@ def plot_confidence(sim, x, y_min, y_max, calc_mean, act_mean, ylabel):
     """
     Note: You can change the input parameters, if you prefer to.
     """
+    pyplot.hlines(calc_mean, 0, len(x), colors='red', linestyles='dashed', label='Sample mean')
+    pyplot.hlines(act_mean, 0, len(x), colors='black', linestyles='dashed', label='theoretical mean')
+    pyplot.vlines(x, y_min, y_max, colors='blue', linestyles='solid')
+    pyplot.title("SIM_TIME = " + str(sim.sim_param.SIM_TIME) + "10^-3 s, ALPHA= " + str(alpha) + ", RHO:" + str(act_mean))
+    pyplot.ylabel(ylabel)
+    pyplot.xlabel("sample id")
+    pyplot.xlim([0, 100])
+    pyplot.legend(loc='lower right')
 
 
 if __name__ == '__main__':
-    # task_5_2_1()
-    task_5_2_2()
+    task_5_2_1()
+    # task_5_2_2()
     # task_5_2_4()
