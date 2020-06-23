@@ -122,6 +122,9 @@ def task_5_2_4():
                 act_mean = sim.sim_param.RHO
                 pyplot.subplot(4, 2, i)
                 plot_confidence(sim, x, [y_min[0] for y_min in y], [y_max[1] for y_max in y],calc_mean, act_mean, "rame", alpha)
+                i+=1
+
+    pyplot.show()
 
 
 
