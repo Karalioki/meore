@@ -34,8 +34,12 @@ class SimParam(object):
         # set desired utilization (rho)
         self.RHO = .5
 
+        # set confidence level and interval width
+        self.ALPHA = .05
+        self.EPSILON = .0015
+
     def print_sim_config(self):
         """
         Print a basic system configuration string.
         """
-        print('Simulation with parameters: T_SIM = ' + str(self.SIM_TIME) + ', S = ' + str(self.S))
+        print('Simulation with parameters: T_SIM = ' + str(self.SIM_TIME) + ", S = " + str(self.S))

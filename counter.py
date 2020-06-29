@@ -1,6 +1,4 @@
 import math
-from typing import Union
-
 import numpy
 import scipy
 import scipy.stats
@@ -112,46 +110,84 @@ class TimeIndependentCounter(Counter):
         return numpy.std(self.values, ddof=1)
 
     def report_confidence_interval(self, alpha=0.05, print_report=True):
+        """
+        Report a confidence interval with given significance level.
+        This is done by using the t-table provided by scipy.
+        :param alpha: is the significance level (default: 5%)
+        :param print_report: enables an output string
+        """
         n = len(self.values)
-        var = self.get_var()
-        t = scipy.stats.t.ppf(1 - (alpha / 2), n - 1)
-        if print_report:
-            print("[confidence interval:"+str(self.get_mean()-t * (math.sqrt(var / n)))+ " "+str(self.get_mean()+t * (math.sqrt(var / n))) + "]")
-
-        return t * (math.sqrt(var / n))
-        pass
-
-    def is_in_confidence_interval(self, x, alpha=0.05, print_report=True):
         mean = self.get_mean()
-        low = mean - self.report_confidence_interval(alpha)
-        upper = mean + self.report_confidence_interval(alpha)
-        if low <= x <= upper:
-            return True
-        else:
-            return False
+        var = self.get_var()
+        h = math.sqrt(var / n) * scipy.stats.t.ppf(1 - alpha / 2., n - 1)
 
-    def report_bootstrap_confidence_interval(self, alpha=0.05, resample_size=5000):
-        theta_static = self.get_mean()
-        bootstrap_difference = []
+        if print_report:
+            print('Counter: ' + str(self.name) + '; number of samples: ' + str(n) + '; mean: ' + str(
+                mean) + '; var: ' + str(var) + '; confidence interval: [' + str(mean - h) + ' ; ' + str(
+                mean + h) + '] (h/2: ' + str(h) + ')')
+
+        return h
+
+    def is_in_confidence_interval(self, x, alpha=0.05):
+        """
+        Check if sample x is in confidence interval with given significance level.
+        :param x: is the sample
+        :param alpha: is the significance level
+        :return: true, if sample is in confidence interval
+        """
+        h = self.report_confidence_interval(alpha, print_report=False)
+        m = self.get_mean()
+
+        print('Value: ' + str(x) + ', mean: ' + str(m) + ', confidence interval: ' + str(h))
+
+        return math.fabs(m - x) <= h
+
+    def report_bootstrap_confidence_interval(self, alpha=0.05, resample_size=5000, print_report=True):
+        """
+        Report bootstrapping confidence interval with given significance level.
+        This is done with the bootstrap method. Hint: use numpy.random.choice for resampling
+        :param alpha: significance level
+        :param resample_size: resampling size
+        :param print_report: enables an output string
+        :return: lower and upper bound of confidence interval
+        """
+        n = len(self.values)
+        mean = self.get_mean()
+        var = self.get_var()
+
+        means = []
         for i in range(resample_size):
-            resample_data = numpy.random.choice(self.values, len(self.values))
-            theta_resample = numpy.mean(resample_data)
-            bootstrap_difference.append(theta_resample - theta_static)
+            samples = numpy.random.choice(self.values, len(self.values), replace=True)
+            means.append(numpy.mean(samples))
 
-        bootstrap_difference = numpy.sort(bootstrap_difference)
-        quantile_low = numpy.quantile(bootstrap_difference, 1 - 0.5 * alpha)
-        quantile_upper = numpy.quantile(bootstrap_difference, 0.5 * alpha)
-        low_bound = theta_static - quantile_low
-        upper_bound = theta_static - quantile_upper
-        return low_bound, upper_bound
+        # Percentile confidence intervals (option 1)
+        lower_index, upper_index = int(alpha / 2 * resample_size), int(resample_size * (1 - alpha / 2))
+        # lower, upper = numpy.sort(means)[lower_index], numpy.sort(means)[upper_index]
 
-    def is_in_bootstrap_confidence_interval(self, x, alpha=0.05, resample_size=5000):
-        (low, upper) = self.report_bootstrap_confidence_interval(alpha, resample_size)
+        # Empirical confidence intervals (option 2)
+        devs = numpy.subtract(means, mean)
+        lower, upper = mean - numpy.sort(devs)[upper_index], mean - numpy.sort(devs)[lower_index]
 
-        if low <= x <= upper:
-            return True
-        else:
-            return False
+        if print_report:
+            print('Counter: ' + str(self.name) + '; number of samples: ' + str(n) + '; mean: ' + str(
+                mean) + '; var: ' + str(var) + '; confidence interval: [' + str(lower) + ' ; ' + str(upper) + '] ')
+
+        return lower, upper
+
+    def is_in_bootstrap_confidence_interval(self, x, resample_size=5000, alpha=0.05):
+        """
+        Check if sample x is in bootstrap confidence interval with given resample_size and significance level.
+        :param x: is the sample
+        :param resample_size: resample size
+        :param alpha: is the significance level
+        :return:
+        """
+        (lower, upper) = self.report_bootstrap_confidence_interval(alpha, resample_size, print_report=False)
+        m = self.get_mean()
+
+        print('Value: ' + str(x) + ', mean: ' + str(m) + ', confidence interval: [' + str(lower) + ' ; ' + str(
+            upper) + ']')
+        return upper > x > lower
 
 
 class TimeDependentCounter(Counter):
@@ -286,25 +322,58 @@ class TimeIndependentAutocorrelationCounter(TimeIndependentCounter):
         """
         super(TimeIndependentAutocorrelationCounter, self).__init__(name)
         self.max_lag = max_lag
+        self.cycle_len = max_lag + 1
+        self.first_samples = []
+        self.last_samples = []
+        self.squared_sums = []
         self.reset()
+
+    def reset(self):
+        """
+        Reset the counter to its original state.
+        """
+        TimeIndependentCounter.reset(self)
+        self.first_samples = numpy.zeros(self.cycle_len)
+        self.last_samples = numpy.zeros(self.cycle_len)
+        self.squared_sums = numpy.zeros(self.cycle_len)
+
+    def count(self, x):
+        """
+        Add new element x to counter.
+        """
+        TimeIndependentCounter.count(self, x)
+        n = len(self.values) - 1
+        if n < self.cycle_len:
+            self.first_samples[n] = x
+        self.last_samples[n % self.cycle_len] = x
+
+        for i in range(min(self.max_lag, n) + 1):
+            squared_sums_i = self.squared_sums[i]
+            index = (n - i + self.cycle_len) % self.cycle_len
+            last_sample_i = self.last_samples[index]
+            self.squared_sums[i] = squared_sums_i + x * last_sample_i
 
     def get_auto_cov(self, lag):
         """
         Calculate the auto covariance for a given lag.
+
+        Note, that you can simplify this function significantly using numpy.roll(self.x, lag) and correlate the
+        resulting array with your initial array (self.x). However this method is more efficient for large size arrays.
+
         :return: auto covariance
         """
         if lag <= self.max_lag:
-            x = self.values
-            y = self.values[-lag:] + self.values[:-1 * lag]
-            xy = []
-
-            for i in range(len(x)):
-                xy.append(x[i] * y[i])
-
-            return numpy.mean(xy) - numpy.mean(x) * numpy.mean(y)
-
+            sum_of_firsts = 0
+            sum_of_lasts = 0
+            for i in range(lag):
+                sum_of_firsts += self.first_samples[i]
+                sum_of_lasts += self.last_samples[(len(self.values) - 1 - i + self.max_lag + 1) % (self.max_lag + 1)]
+            return (self.squared_sums[lag] - self.get_mean() * (
+                        2 * numpy.sum(self.values) - sum_of_firsts - sum_of_lasts)) / (
+                               len(self.values) - lag) + self.get_mean() * self.get_mean()
         else:
-            raise RuntimeError("lag larger than max_lag, please correct!")
+            print('lag larger than max_lag, please correct!')
+            return -1
 
     def get_auto_cor(self, lag):
         """
@@ -316,15 +385,17 @@ class TimeIndependentAutocorrelationCounter(TimeIndependentCounter):
             if var != 0:
                 return self.get_auto_cov(lag) / var
             else:
-                return 0.0
+                raise ValueError("not applicable, variance == 0!")
         else:
-            raise RuntimeError("lag larger than max_lag, please correct!")
+            print('lag larger than max_lag, please correct!')
+            return -1
 
     def set_max_lag(self, max_lag):
         """
         Change maximum lag. Cycle length is set to max_lag + 1.
         """
         self.max_lag = max_lag
+        self.cycle_len = max_lag + 1
         self.reset()
 
     def report(self):

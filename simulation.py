@@ -85,7 +85,6 @@ class Simulation(object):
         if not new_batch:
             self.event_chain.insert(CustomerArrival(self, 0))
 
-        cnt_served_packets = 0
         # start simulation (run)
         while not self.sim_state.stop:
 
@@ -98,11 +97,8 @@ class Simulation(object):
                     self.counter_collection.count_queue()
                     e.process()
 
-                    # if this event is a service completion event
-                    if e.priority == 0:
-                        cnt_served_packets += 1
-                        if cnt_served_packets > n:
-                            self.sim_state.stop = True
+                    if self.sim_state.num_packets >= n:
+                        self.sim_state.stop = True
 
                 else:
                     print('NOW: ' + str(self.sim_state.now) + ', EVENT TIMESTAMP: ' + str(e.timestamp))
