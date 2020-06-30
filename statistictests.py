@@ -26,26 +26,25 @@ class ChiSquare(object):
         # TODO Task 6.1.1: Your code goes here
         Oi = self.emp_n
         Ei = []
-        min_Ei = 5
+        min_Ei = 5.0
         # n = len(self.emp_x)
-        # pi = numpy.random.normal(loc=mean, scale=var)
         f = scipy.stats.norm(mean, var)
         # n = 100
         n = numpy.sum(Oi)
-        k = len(self.emp_x - 1)
+        k = len(self.emp_x)-1
         for i in range(k):
             expFrequency = 0
-            pi = f.cdf(self.emp_x[i]) - f.cdf(self.emp_x[i-1])
+            pi = f.cdf(self.emp_x[i+1]) - f.cdf(self.emp_x[i])
             expFrequency = n * pi
             Ei.append(expFrequency)
 
         new_Ei = []
         new_Oi = []
-        Combined_Ei = 0
-        Combined_Oi = 0
+        # Combined_Ei = 0
+        # Combined_Oi = 0
         index = 0
         l = len(Oi) - index
-        for j in range(len(Oi)):
+        for j in range(len(Ei)):
             Combined_Ei = 0
             Combined_Oi = 0
             for i in range(index, l, 1):
@@ -68,19 +67,20 @@ class ChiSquare(object):
             new_Oi[len(new_Oi) - 2] += new_Oi[len(new_Oi) - 1]
             new_Oi[len(new_Oi) - 1] = 0
             new_Oi = numpy.trim_zeros(new_Oi, trim='fb')
-        chi_square = 0
-        for i in range(len(new_Ei)):
-            chi_square = ((new_Oi - new_Ei)**2)/new_Ei
 
-        deg_freedom = len(new_Ei) - 2 - 1
+        chi_square = 0.0
+        for i in range(len(new_Oi)):
+            chi_square += ((new_Oi[i] - new_Ei[i])**2)/new_Ei[i]
+
+        deg_freedom = len(new_Oi) - 2 - 1
         table_chi = scipy.stats.chi2.ppf(1-alpha, deg_freedom)
-        print("Mean:" + str(mean) + " Variance:" + str(var) + " Chi-square Test value:" + str(chi_square) \
-        + " Table value:" + str(table_chi))
+        print("Mean=" + str(mean) + " Variance=" + str(var) + " Chi-square=" + str(chi_square) \
+        + " Table Chi value=" + str(table_chi))
 
         if chi_square > table_chi:
-            print("Hypothesis rejected.")
+            print("rejected.")
         else:
-            print("Hypothesis not rejected.")
+            print("Not rejected.")
         return chi_square, table_chi
 
         # a = [5, 2]
