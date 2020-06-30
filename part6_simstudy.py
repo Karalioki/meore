@@ -14,7 +14,17 @@ def task_6_2_1():
     whether they follow the original or another given distribution.
     """
     # TODO Task 6.2.1: Your code goes here
-    pass
+    x = []
+    for i in range(100):
+        xi = 0
+        xi = numpy.random.normal(0, 1)
+        x.append(xi)
+
+    bins = 15
+    emp_n, emp_x = numpy.histogram(x, bins=bins)
+    Ch_2 = ChiSquare(emp_x, emp_n)
+    Ch_2.test_distribution(0.05, 0, 1)
+    # pass
 
 
 if __name__ == '__main__':

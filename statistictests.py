@@ -68,20 +68,20 @@ class ChiSquare(object):
             new_Oi[len(new_Oi) - 1] = 0
             new_Oi = numpy.trim_zeros(new_Oi, trim='fb')
 
-        chi_square = 0.0
+        chi2 = 0.0
         for i in range(len(new_Oi)):
-            chi_square += ((new_Oi[i] - new_Ei[i])**2)/new_Ei[i]
+            chi2 += ((new_Oi[i] - new_Ei[i])**2)/new_Ei[i]
 
         deg_freedom = len(new_Oi) - 2 - 1
-        table_chi = scipy.stats.chi2.ppf(1-alpha, deg_freedom)
-        print("Mean=" + str(mean) + " Variance=" + str(var) + " Chi-square=" + str(chi_square) \
-        + " Table Chi value=" + str(table_chi))
+        chi2_table = scipy.stats.chi2.ppf(1-alpha, deg_freedom)
+        print("Mean=" + str(mean) + " Variance=" + str(var) + " Chi Square=" + str(chi2) \
+        + " Table Chi Square=" + str(chi2_table))
 
-        if chi_square > table_chi:
+        if chi2 > chi2_table:
             print("rejected.")
         else:
             print("Not rejected.")
-        return chi_square, table_chi
+        return chi2, chi2_table
 
         # a = [5, 2]
         # n = len(a)
